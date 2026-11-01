@@ -1,7 +1,7 @@
 
 package Dominio;
 
-public class Actividad implements Comparable<Actividad> {
+public class Actividad implements Comparable<Actividad>, java.io.Serializable {
     private int dia;
     private int orden;
     private String horario;

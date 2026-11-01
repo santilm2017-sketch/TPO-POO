@@ -1,4 +1,3 @@
-
 package Dominio;
 
 import Dominio.Excepciones.RequisitoPasajeroException;
@@ -6,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Tour {
+public abstract class Tour implements java.io.Serializable {
     protected String codigo;
     protected String nombre;
     protected String descripcion;
@@ -104,6 +103,32 @@ public abstract class Tour {
         }
 
         tarifas.add(tarifa);
+    }
+
+    // --- GETTERS (agregados para resolver las llamadas en Salida y Guía) ---
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public int getDuracionDias() {
+        return duracionDias;
+    }
+
+    public int getCupoMinimo() {
+        return cupoMinimo;
+    }
+
+    public int getCupoMaximo() {
+        return cupoMaximo;
     }
 
     public List<Actividad> getItinerario() {
