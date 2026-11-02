@@ -19,7 +19,7 @@ public abstract class Tour implements java.io.Serializable {
                 int duracionDias, int cupoMinimo, int cupoMaximo) {
 
         if (duracionDias < 1 || cupoMinimo < 1 || cupoMaximo < cupoMinimo) {
-            throw new IllegalArgumentException("La duracion o los cupos no son validos.");
+            throw new IllegalArgumentException("La duración o los cupos no son validos.");
         }
 
         this.codigo = codigo;

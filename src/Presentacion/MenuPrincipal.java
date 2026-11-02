@@ -2,14 +2,18 @@ package Presentacion;
 
 import Controladores.*;
 import Dominio.*;
-
+import Persistencia.*;
 import java.util.Scanner;
 
 public class MenuPrincipal {
     private static final Scanner scanner = new Scanner(System.in);
+
+    private static final IRepository<Tour> tourRepo = new TourRepository();
+    private static final IRepository<Salida> salidaRepo = new SalidaRepository();
+
     private static final ControladorVentas controladorVentas = new ControladorVentas();
-    private static final ControladorOperaciones controladorOperaciones = new ControladorOperaciones();
-    private static final ControladorAdministrativo controladorAdmin = new ControladorAdministrativo();
+    private static final ControladorOperaciones controladorOperaciones = new ControladorOperaciones(salidaRepo, tourRepo);
+    private static final ControladorAdministrativo controladorAdmin = new ControladorAdministrativo(tourRepo, salidaRepo);
 
     public static void main(String[] args) {
         int opcion = -1;
@@ -21,7 +25,7 @@ public class MenuPrincipal {
             } catch (NumberFormatException e) {
                 System.out.println("Error: Debe ingresar un numero entero valido.");
             } catch (Exception e) {
-                System.out.println("Error en la operacion: " + e.getMessage());
+                System.out.println("Error en la operación: " + e.getMessage());
             }
         }
     }
@@ -37,9 +41,9 @@ public class MenuPrincipal {
         System.out.println("5. Registrar Pago de Reserva");
         System.out.println("6. Asignar Guia a Salida");
         System.out.println("7. Iniciar / Cerrar Salida");
-        System.out.println("8. Emitir Reporte de Ocupacion");
+        System.out.println("8. Emitir Reporte de Ocupación");
         System.out.println("0. Salir");
-        System.out.print("Seleccione una opcion: ");
+        System.out.print("Seleccione una opción: ");
     }
 
     private static void procesarOpcion(int opcion) {
@@ -53,7 +57,7 @@ public class MenuPrincipal {
             case 7 -> gestionarEstadoSalida();
             case 8 -> controladorAdmin.emitirReporteOcupacion();
             case 0 -> System.out.println("Gracias por utilizar el sistema Rumbo Sur.");
-            default -> System.out.println("Opcion no valida. Reintente.");
+            default -> System.out.println("Opción no valida. Reintente.");
         }
     }
 
@@ -64,7 +68,7 @@ public class MenuPrincipal {
         String nom = scanner.nextLine();
         System.out.print("Email: ");
         String email = scanner.nextLine();
-        System.out.print("Telefono: ");
+        System.out.print("Teléfono: ");
         String tel = scanner.nextLine();
 
         Cliente c = new Cliente(doc, nom, email, tel);
@@ -73,30 +77,50 @@ public class MenuPrincipal {
     }
 
     private static void registrarTour() {
-        System.out.print("Codigo del tour: ");
+        System.out.print("Código del tour: ");
         String cod = scanner.nextLine();
         System.out.print("Nombre: ");
         String nom = scanner.nextLine();
-        System.out.print("Descripcion: ");
+        System.out.print("Descripción: ");
         String desc = scanner.nextLine();
-        System.out.print("Duracion en dias: ");
+        System.out.print("Duración en días: ");
         int dias = Integer.parseInt(scanner.nextLine());
-        System.out.print("Cupo minimo: ");
+        System.out.print("Cupo mínimo: ");
         int cMin = Integer.parseInt(scanner.nextLine());
-        System.out.print("Cupo maximo: ");
+        System.out.print("Cupo máximo: ");
         int cMax = Integer.parseInt(scanner.nextLine());
-
-        TourAventura tour = new TourAventura(cod, nom, desc, dias, cMin, cMax, 12, "Media");
-        controladorAdmin.registrarTour(tour);
-        System.out.println("--> Tour de Aventura registrado exitosamente.");
+        System.out.println("Tipo de Tour a registrar(Aventura, Cultural, Naturaleza): ");
+        String tipo =  scanner.nextLine().trim().toLowerCase();
+        switch (tipo) {
+            case "aventura":
+                System.out.println("Edad Mínima: ");
+                int eM = Integer.parseInt(scanner.nextLine());
+                System.out.println("Nivel de Dificultad: ");
+                String nivel = scanner.nextLine();
+                TourAventura tour1 = new TourAventura(cod, nom, desc, dias, cMin, cMax, eM, nivel);
+                controladorAdmin.registrarTour(tour1);
+                break;
+            case "cultural":
+                TourCultural tour2 = new  TourCultural(cod, nom, desc, dias, cMin, cMax);
+                controladorAdmin.registrarTour(tour2);
+                break;
+            case "naturaleza":
+                TourNaturaleza tour3 = new TourNaturaleza(cod, nom, desc, dias, cMin, cMax);
+                controladorAdmin.registrarTour(tour3);
+                break;
+            default:
+                System.out.println("Tipo de Tour inválido.");
+                return;
+        }
+        System.out.println("--> Tour registrado exitosamente.");
     }
 
     private static void programarSalida() {
-        System.out.print("Codigo de Tour existente: ");
+        System.out.print("Código de Tour existente: ");
         String cod = scanner.nextLine();
         Tour tour = controladorAdmin.buscarTour(cod);
         if (tour == null) {
-            System.out.println("Error: No existe el tour con codigo " + cod);
+            System.out.println("Error: No existe el tour con código " + cod);
             return;
         }
 
@@ -183,7 +207,7 @@ public class MenuPrincipal {
         String idSalida = scanner.nextLine();
         System.out.println("1. Iniciar Salida");
         System.out.println("2. Cerrar Salida");
-        System.out.print("Opcion: ");
+        System.out.print("Opción: ");
         int op = Integer.parseInt(scanner.nextLine());
 
         if (op == 1) {

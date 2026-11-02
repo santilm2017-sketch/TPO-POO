@@ -23,10 +23,16 @@ public class SalidaRepository implements IRepository<Salida> {
 
     @Override
     public Salida buscarPorId(String idSalida) {
-        // Busca por código de tour o fecha de inicio de la salida
+        // Busca por código de tour
+        if (idSalida == null) {
+            return null;
+        }
+        idSalida = idSalida.trim();
         for (Salida s : salidas) {
-            String clave = s.getTour().getCodigo() + "_" + s.getFechaInicio();
-            if (clave.equalsIgnoreCase(idSalida) || s.getFechaInicio().equalsIgnoreCase(idSalida)) {
+            String clave = s.getTour().getCodigo()
+                    + "_" + s.getFechaInicio();
+
+            if (clave.equalsIgnoreCase(idSalida)) {
                 return s;
             }
         }

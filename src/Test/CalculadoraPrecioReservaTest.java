@@ -44,6 +44,6 @@ public class CalculadoraPrecioReservaTest {
                 pGrupo.calcularDescuento(null, subtotal)
         );
 
-        System.out.println("[OK] Prueba RN11/RN12 - Evaluacion de mejor promocion superada.");
+        System.out.println("[OK] Prueba RN11/RN12 - Evaluación de mejor promoción superada.");
     }
 }

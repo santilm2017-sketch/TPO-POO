@@ -23,8 +23,9 @@ public class TourRepository implements IRepository<Tour> {
 
     @Override
     public Tour buscarPorId(String codigo) {
+        codigo = codigo.trim();
         for (Tour t : tours) {
-            if (t.getCodigo().equalsIgnoreCase(codigo)) {
+            if (t.getCodigo().trim().equalsIgnoreCase(codigo)) {
                 return t;
             }
         }
@@ -64,7 +65,7 @@ public class TourRepository implements IRepository<Tour> {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(rutaArchivo))) {
             oos.writeObject(tours);
         } catch (IOException e) {
-            System.err.println("Error al guardar tours en archivo: " + e.getMessage());
+            throw new IllegalStateException("No se pudieron guardar los tours en el archivo.", e);
         }
     }
 }
