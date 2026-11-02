@@ -1,12 +1,11 @@
 package Dominio;
 
 import Dominio.Excepciones.RequisitoPasajeroException;
-
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class Tour {
+public abstract class Tour implements java.io.Serializable {
     protected String codigo;
     protected String nombre;
     protected String descripcion;
@@ -16,7 +15,13 @@ public abstract class Tour {
     protected List<Actividad> itinerario;
     protected List<Tarifa> tarifas;
 
-    public Tour(String codigo, String nombre, String descripcion, int duracionDias, int cupoMinimo, int cupoMaximo) {
+    public Tour(String codigo, String nombre, String descripcion,
+                int duracionDias, int cupoMinimo, int cupoMaximo) {
+
+        if (duracionDias < 1 || cupoMinimo < 1 || cupoMaximo < cupoMinimo) {
+            throw new IllegalArgumentException("La duracion o los cupos no son validos.");
+        }
+
         this.codigo = codigo;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -27,20 +32,110 @@ public abstract class Tour {
         this.tarifas = new ArrayList<>();
     }
 
-    public abstract void validarRequisitosPasajero(Pasajero pasajero) throws RequisitoPasajeroException;
+    public abstract boolean validarRequisitosPasajero(Pasajero pasajero)
+            throws RequisitoPasajeroException;
+
+    public Tarifa getTarifaVigente(String fecha, String temporada) {
+        Tarifa elegida = null;
+
+        for (Tarifa tarifa : tarifas) {
+            if (tarifa.getTemporada().equalsIgnoreCase(temporada)
+                    && tarifa.esVigente(fecha)) {
+
+                if (elegida == null ||
+                        tarifa.getFechaVigencia().compareTo(elegida.getFechaVigencia()) > 0) {
+                    elegida = tarifa;
+                }
+            }
+        }
+
+        if (elegida == null) {
+            throw new IllegalStateException("No hay tarifa vigente para esa fecha y temporada.");
+        }
+
+        return elegida;
+    }
 
     public Tarifa getTarifaVigente(String fecha) {
-        for (Tarifa t : tarifas) {
-            if (t.esVigente(fecha)) return t;
+        Tarifa elegida = null;
+
+        for (Tarifa tarifa : tarifas) {
+            if (tarifa.esVigente(fecha)) {
+
+                if (elegida != null &&
+                        !elegida.getTemporada().equalsIgnoreCase(tarifa.getTemporada())) {
+                    throw new IllegalStateException("Hay varias temporadas: indique la temporada.");
+                }
+
+                if (elegida == null ||
+                        tarifa.getFechaVigencia().compareTo(elegida.getFechaVigencia()) > 0) {
+                    elegida = tarifa;
+                }
+            }
         }
-        return !tarifas.isEmpty() ? tarifas.get(0) : new Tarifa("Baja", "2026-01-01", 1000.0);
+
+        if (elegida == null) {
+            throw new IllegalStateException("No hay tarifas vigentes para esa fecha.");
+        }
+
+        return elegida;
     }
 
     public void agregarActividad(Actividad actividad) {
+        if (actividad == null || actividad.getDia() > duracionDias) {
+            throw new IllegalArgumentException("La actividad tiene un dia no valido para el tour.");
+        }
+
+        for (Actividad existente : itinerario) {
+            if (existente.getDia() == actividad.getDia() &&
+                    existente.getOrden() == actividad.getOrden()) {
+                throw new IllegalArgumentException("Ya existe una actividad en ese dia y orden.");
+            }
+        }
+
         itinerario.add(actividad);
+        Collections.sort(itinerario);
     }
 
     public void agregarTarifa(Tarifa tarifa) {
+        if (tarifa == null) {
+            throw new IllegalArgumentException("No se puede agregar una tarifa nula.");
+        }
+
         tarifas.add(tarifa);
+    }
+
+    // --- GETTERS (agregados para resolver las llamadas en Salida y Guía) ---
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public int getDuracionDias() {
+        return duracionDias;
+    }
+
+    public int getCupoMinimo() {
+        return cupoMinimo;
+    }
+
+    public int getCupoMaximo() {
+        return cupoMaximo;
+    }
+
+    public List<Actividad> getItinerario() {
+        return new ArrayList<>(itinerario);
+    }
+
+    public List<Tarifa> getTarifas() {
+        return new ArrayList<>(tarifas);
     }
 }

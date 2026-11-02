@@ -1,38 +1,40 @@
 package Dominio;
 
-public class Pasajero {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Pasajero implements Serializable {
+    private String documento;
     private String nombre;
-    private int edad;
-    private int documento;
     private String fechaNacimiento;
     private String tipo;
     private String contactoEmergencia;
     private String restricciones;
+    private List<ContratacionServicio> contrataciones;
 
-    public Pasajero(String nombre, int edad, int documento, String fechaNacimiento, String tipo, String contactoEmergencia, String restricciones) {
-        this.nombre = nombre;
-        this.edad = edad;
+    public Pasajero(String documento, String nombre, String fechaNacimiento, String tipo, String contactoEmergencia, String restricciones) {
         this.documento = documento;
+        this.nombre = nombre;
         this.fechaNacimiento = fechaNacimiento;
         this.tipo = tipo;
         this.contactoEmergencia = contactoEmergencia;
         this.restricciones = restricciones;
+        this.contrataciones = new ArrayList<>();
     }
 
-    public void contratarServicio(ServicioAdicional servicio){
+    public void agregarContratacion(ContratacionServicio cs) {
+        if (cs != null) {
+            this.contrataciones.add(cs);
+        }
+    }
 
+    public String getDocumento() {
+        return documento;
     }
 
     public String getNombre() {
         return nombre;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public int getDocumento() {
-        return documento;
     }
 
     public String getFechaNacimiento() {
@@ -49,5 +51,9 @@ public class Pasajero {
 
     public String getRestricciones() {
         return restricciones;
+    }
+
+    public List<ContratacionServicio> getContrataciones() {
+        return new ArrayList<>(contrataciones);
     }
 }
