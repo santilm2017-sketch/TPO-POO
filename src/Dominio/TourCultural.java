@@ -7,11 +7,10 @@ public class TourCultural extends Tour{
         super(codigo, nombre, descripcion, duracionDias, cupoMinimo, cupoMaximo);
     }
 
+    public String getCategoria() { return "cultural"; }
+
     @Override
-    public boolean validarRequisitosPasajero(Pasajero pasajero) throws RequisitoPasajeroException {
-        if (pasajero == null) {
-            return false;
-        }
-        return true;
+    public boolean validarRequisitosPasajero(Pasajero pasajero, String fechaSalida) throws RequisitoPasajeroException {
+        return pasajero != null;
     }
 }

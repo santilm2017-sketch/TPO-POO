@@ -17,28 +17,12 @@ public class CalculadoraPrecioReserva {
      * Calcula el precio de pasaje individual según el tipo de pasajero (RN10).
      */
     public double calcularPrecioPasajero(Pasajero pasajero, double tarifaBase) {
-        if (pasajero == null) {
-            return 0.0;
-        }
-
-        String tipo = pasajero.getTipo();
-        if (tipo == null) {
-            tipo = "adulto";
-        }
-
-        switch (tipo.toLowerCase()) {
-            case "menor_3":
-            case "bebe":
-                return 0.0; // Menor de 3 años no paga (RN10)
-            case "menor_12":
-            case "menor":
-                return tarifaBase * 0.60; // Menor de 12 años paga el 60% (RN10)
-            case "jubilado":
-                return tarifaBase * 0.90; // Jubilado tiene 10% de descuento (RN10)
-            case "adulto":
-            default:
-                return tarifaBase; // Adulto paga el 100% de la tarifa (RN10)
-        }
+        String tipo = pasajero.getTipo().toLowerCase();
+        if (tipo.equals("menor_3") || tipo.equals("bebe")) return 0;
+        if (tipo.equals("menor_12") || tipo.equals("menor")) return tarifaBase * 0.60;
+        if (tipo.equals("jubilado")) return tarifaBase * 0.90;
+        if (tipo.equals("adulto")) return tarifaBase;
+        throw new IllegalArgumentException("Tipo de pasajero desconocido.");
     }
 
     /**
@@ -104,7 +88,7 @@ public class CalculadoraPrecioReserva {
         double totalAdicionales = calcularTotalServiciosAdicionales(reserva);
 
         // 5. Total final = (Subtotal Pasajes - Descuento Promo) + Adicionales
-        double totalFinal = (subtotalPasajes - descuentoPromocion) + totalAdicionales;
+        double totalFinal = Importes.redondear(subtotalPasajes - descuentoPromocion + totalAdicionales);
         reserva.setTotal(totalFinal);
 
         return totalFinal;

@@ -5,18 +5,25 @@ import java.io.Serializable;
 public class Pago implements Serializable {
     private String fecha;
     private double importe;
+    private int cuotas;
     private MedioPago medioPago;
 
     public Pago(String fecha, double importe, MedioPago medioPago) {
-        if (importe <= 0) {
+        this(fecha, importe, medioPago, 1);
+    }
+
+    public Pago(String fecha, double importe, MedioPago medioPago, int cuotas) {
+        new Fecha(fecha);
+        if (medioPago == null || cuotas < 1) throw new IllegalArgumentException("Medio y cuotas inválidos.");
+        this.cuotas = cuotas;
+        if (!Importes.esValido(importe) || importe == 0) {
             throw new IllegalArgumentException("El importe del pago debe ser mayor a cero.");
         }
         this.fecha = fecha;
-        this.importe = importe;
+        this.importe = Importes.redondear(importe);
+        if (this.importe != importe) throw new IllegalArgumentException("Use hasta dos decimales en el pago.");
         this.medioPago = medioPago;
     }
-
-    // --- GETTERS Y SETTERS ---
 
     public String getFecha() {
         return fecha;
@@ -30,15 +37,7 @@ public class Pago implements Serializable {
         return medioPago;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public void setImporte(double importe) {
-        this.importe = importe;
-    }
-
-    public void setMedioPago(MedioPago medioPago) {
-        this.medioPago = medioPago;
+    public double getMontoCobrado() {
+        return Importes.redondear(medioPago.calcularMontoFinal(importe, cuotas));
     }
 }

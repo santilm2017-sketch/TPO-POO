@@ -6,7 +6,7 @@ public class Vehiculo implements java.io.Serializable {
     private String tipo; // Micro, Combi, Camioneta
 
     public Vehiculo(String patente, int capacidad, String tipo) {
-        if (patente == null || capacidad <= 0) {
+        if (patente == null || patente.isBlank() || capacidad <= 0) {
             throw new IllegalArgumentException("Patente y capacidad válida son obligatorias.");
         }
         this.patente = patente;

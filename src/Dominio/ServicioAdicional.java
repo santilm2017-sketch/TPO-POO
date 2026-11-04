@@ -6,7 +6,7 @@ public class ServicioAdicional implements java.io.Serializable {
     private boolean esObligatorio;
 
     public ServicioAdicional(String nombre, double precio, boolean esObligatorio) {
-        if (nombre == null || precio < 0) {
+        if (nombre == null || nombre.isBlank() || !Importes.esValido(precio)) {
             throw new IllegalArgumentException("Nombre y precio válido son obligatorios.");
         }
         this.nombre = nombre;
