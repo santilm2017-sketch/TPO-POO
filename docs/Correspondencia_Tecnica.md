@@ -1,5 +1,13 @@
 # Correspondencia técnica de la implementación
 
+## Actualización: registro de personal incorporado
+
+Esta actualización reemplaza los pendientes de personal que se conservan debajo como antecedente de la auditoría. Se revisaron los cinco archivos de Correccion_Personal_Rumbo_Sur.zip y se incorporaron PersonalAdministrativo, RepositorioPersonal, PersonalAdministrativoTest y las modificaciones de ControladorAdministrativo y MenuPrincipal. Se corrigió además la validación de documento duplicado al actualizar y se agregó RepositorioPersonalTest.
+
+Coordinador y administrador se representan mediante PersonalAdministrativo con rol validado. Hereda nombre, documento, teléfono y email de Personal y agrega legajo. Se registran y consultan desde la opción 10; se guardan en personal.dat mediante ArchivoLista. Se conserva el legajo de Vendedor y la matrícula/legajo de Guia. No se trasladó el atributo a Personal: evita cambiar la estructura serializada de las clases existentes. Es una diferencia de ubicación respecto del UML, no una ausencia de los datos requeridos.
+
+Verificación: compilación con `--release 17`; 65 comprobaciones unitarias, 6 de persistencia y 27 casos de consola aprobados, sin fallas. Los 27 comprenden F01–F24 y los tres casos de personal del plan. Se usaron carpetas temporales. El registro de ambos roles, recuperación tras reinicio y rechazo de duplicados quedaron comprobados. F25 de IntelliJ y la validación gráfica/sintáctica de Mermaid siguen pendientes, al igual que la aclaración del alcance de liquidaciones a proveedores. No se implementaron liquidaciones ni se redactó el informe final.
+
 **Reverificación del 04/11/2026:** el código vuelve a compilar y aprueba 55 comprobaciones unitarias y F01–F24 (24 casos funcionales). Los resultados de recuperación de archivos y fechas DD/MM/AAAA se reprodujeron en carpetas temporales. F25 continúa pendiente. El resto de las menciones a ejecuciones de este documento describe la revisión anterior. El hash remoto de main consultado sin cambiar referencias coincide con main local y HEAD: `40c7ea614aa45798d96cefb0c1dbcf3146435ff4`. No se detectaron avances adicionales en main remoto en esa consulta. Continúan pendientes los datos del personal y la validación de las secuencias con un parser Mermaid, además de confirmar el alcance de proveedores.
 
 Revisión del 03/11/2026. Este documento complementa la auditoría y registra el estado técnico observado. No es el informe final del TPO ni atribuye decisiones al grupo. El PDF de la Etapa 1 no se modifica.

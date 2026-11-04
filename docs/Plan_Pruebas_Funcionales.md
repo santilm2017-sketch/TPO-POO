@@ -1,5 +1,17 @@
 # Plan de pruebas — Agencia de Turismo Rumbo Sur
 
+## Ampliación: personal
+
+Después de incorporar la corrección de personal se recompiló para Java 17: 65 comprobaciones unitarias aprobadas (33 + 22 + 10), 6 de persistencia aprobadas y F01–F24 nuevamente aprobados. También se ejecutaron los tres casos siguientes desde MenuPrincipal en carpetas temporales. Resultado funcional actual: **27 APROBADOS, 0 FALLIDOS y F25 PENDIENTE**. Para repetir F25 ejecutar ahora los tres main unitarios (65 comprobaciones); la prueba de archivos requiere una carpeta nueva según el README.
+
+| ID | Funcionalidad | Datos de entrada | Resultado esperado | Resultado obtenido | Estado | Observaciones |
+|---|---|---|---|---|---|---|
+| P01 | Registrar y consultar ambos roles | Fecha 03/11/2026, 10 → 1: 123, Ana, email vacío, 111, C001, coordinador. Repetir con 456, Luis, email vacío, 222, A001, administrador. Consultar con 10 → 2. | Mostrar los dos registros con sus datos. | Ambos roles, legajos, nombres, documentos y teléfonos correctos. | APROBADO | Carpeta nueva. |
+| P02 | Recuperar personal | Salir y reiniciar en la misma carpeta con la misma fecha; 10 → 2 y consultar reserva 1. | Recuperar ambos roles y conservar reserva. | Ambos registros recuperados; reserva confirmada, total $36.000 y saldo $25.200. | APROBADO | Proceso nuevo. |
+| P03 | Rechazar duplicado | 10 → 1: 789, Eva, email vacío, 333, c001, administrador; consultar. | Rechazar legajo repetido y conservar a Ana. | Mensaje de duplicado y registro original conservado. | APROBADO | Continúa P02. |
+
+Los resultados y totales anteriores de este documento son antecedentes; esta ampliación es el estado vigente. RepositorioPersonalTest también comprueba documento duplicado en alta y actualización y la recuperación de un cambio válido.
+
 ## Objetivo y alcance
 
 Se verificaron las operaciones principales de la Propuesta B de la Etapa 2: catálogo, clientes, reservas, cobros, cupos, modificaciones, cancelaciones y operación de salidas. También se comprobó que los datos se conservaran después de cerrar el programa.

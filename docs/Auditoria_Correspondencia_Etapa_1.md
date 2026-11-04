@@ -1,5 +1,7 @@
 # Correspondencia entre la Etapa 1 y Java
 
+**Actualización posterior:** el pendiente de datos de coordinador y administrador quedó implementado y probado mediante PersonalAdministrativo, RepositorioPersonal y la opción 10. Consultar la actualización inicial de Correspondencia_Tecnica.md. Las observaciones de personal de esta auditoría describen el estado anterior.
+
 **Actualización técnica posterior:** consultar [Correspondencia_Tecnica.md](Correspondencia_Tecnica.md) para la clasificación de diferencias y [las secuencias actualizadas](uml/README.md). En particular, se comprobó que ServicioAdicional no permite modificar su precio mediante su API actual: la ausencia de precioContratado separado no implica pérdida del precio guardado. Los datos de coordinador y administrador continúan pendientes bajo lectura literal del enunciado. Se conserva esta auditoría como antecedente, sin modificar el PDF original.
 
 Auditoría del 03/11/2026, rama `revision-codex-tpo`. No se modificó código ni el PDF entregado.

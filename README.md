@@ -19,7 +19,7 @@ El programa reúne la venta y la operación de cada salida. Controla los lugares
 
 ## Repositorio
 
-El proyecto se encuentra en [TPO-POO en GitHub](https://github.com/santilm2017-sketch/TPO-POO). La revisión de esta entrega se está realizando en la rama `revision-codex-tpo`.
+El proyecto se encuentra en [TPO-POO en GitHub](https://github.com/santilm2017-sketch/TPO-POO). La revisión de esta entrega se está realizando en la rama `revision-tpo`.
 
 ## Organización del proyecto
 
@@ -163,6 +163,20 @@ java -cp out Presentacion.MenuPrincipal
 
 ## Cómo probar el sistema
 
+La opción **10 → 1** registra coordinador o administrador con documento, nombre, email, teléfono, legajo y rol. **10 → 2** consulta ambos roles. Los cuatro datos obligatorios se validan y se rechazan legajos o documentos repetidos. Se recuperan al reiniciar desde el mismo directorio, mediante `datos/personal.dat`.
+
+`PersonalAdministrativo` hereda de `Personal`. Conserva su propio legajo; Vendedor mantiene el suyo y Guia utiliza matrícula/legajo. La estructura serializada de esas clases existentes no se modificó.
+
+Para ejecutar la prueba de archivos de personal, después de compilar, usar una carpeta nueva (si existe, elegir otro nombre):
+
+```powershell
+$clasesPersonal = Join-Path (Get-Location).Path 'out'
+$pruebaPersonal = Join-Path $env:TEMP 'rumbo-personal-prueba-01'
+New-Item -ItemType Directory -Path $pruebaPersonal -ErrorAction Stop | Out-Null
+Push-Location $pruebaPersonal
+try { java -cp $clasesPersonal Test.RepositorioPersonalTest } finally { Pop-Location }
+```
+
 ### Opciones del menú
 
 | Opción | Uso |
@@ -176,6 +190,7 @@ java -cp out Presentacion.MenuPrincipal
 | 7. Modificar o cancelar reserva | Contratar adicionales, reemplazar pasajeros, cancelar o registrar un ajuste. |
 | 8. Operar salida | Asignar guía y vehículo, emitir la lista, iniciar, cerrar o liquidar honorarios. |
 | 9. Reportes | Consultar ocupación, ventas por vendedor, ingresos por tour y cancelaciones. |
+| 10. Personal administrativo | Registrar y consultar coordinador y administrador. |
 | 0. Salir | Terminar la sesión. |
 
 ### Datos precargados
@@ -223,9 +238,10 @@ La clase `Test.CalculadoraPrecioReservaTest` comprueba precios, promociones, can
 ```powershell
 java -cp out Test.CalculadoraPrecioReservaTest
 java -cp out Test.ReservaSalidaTest
+java -cp out Test.PersonalAdministrativoTest
 ```
 
-La ejecución verificada completó **55 comprobaciones aprobadas y ninguna fallida**: 33 en la primera clase y 22 en la segunda. Cada caso correcto muestra `[OK]`; un resultado incorrecto interrumpe la prueba con una excepción.
+La ejecución verificada completó **65 comprobaciones unitarias aprobadas y ninguna fallida**: 33 en la primera clase, 22 en la segunda y 10 en `Test.PersonalAdministrativoTest`. También aprobaron las 6 comprobaciones de archivos de `Test.RepositorioPersonalTest`. Cada caso correcto muestra `[OK]`; un resultado incorrecto interrumpe la prueba con una excepción.
 
 ### Demostración desde un archivo
 
@@ -253,11 +269,11 @@ Estos casos fueron ejecutados con el código actual. Los importes del ejemplo pr
 | Cobro y liquidación | Pagar 25.200, reiniciar el 15/01/2027, iniciar y cerrar Salta | Saldo cero y honorarios 18.100 | Se conservaron los datos y se liquidó el importe esperado. |
 | Venta desde demo.txt | Pasaje 1.000, traslado 100 y seña 330 con tarjeta en tres cuotas | Total 1.100, cobro 353,10 y saldo 770 | Reserva confirmada con esos importes. |
 
-El [plan de pruebas funcionales](docs/Plan_Pruebas_Funcionales.md) detalla las entradas, los resultados y cómo repetir los recorridos en carpetas separadas. Incluye 24 casos aprobados desde consola, ninguno fallido y una verificación manual pendiente en IntelliJ.
+El [plan de pruebas funcionales](docs/Plan_Pruebas_Funcionales.md) detalla las entradas, los resultados y cómo repetir los recorridos en carpetas separadas. Incluye 27 casos aprobados desde consola, ninguno fallido y una verificación manual pendiente en IntelliJ.
 
 ## Estado de la entrega
 
-Las [aclaraciones de correspondencia técnica](docs/Correspondencia_Tecnica.md) clasifican las diferencias con la Etapa 1. Las [secuencias actualizadas y editables](docs/uml/README.md) complementan los diagramas originales. Sigue pendiente resolver el registro de datos del coordinador y administrador bajo la lectura literal del enunciado y confirmar el alcance de las liquidaciones a proveedores; no se declara cumplimiento total de esos puntos.
+Las [aclaraciones de correspondencia técnica](docs/Correspondencia_Tecnica.md) clasifican las diferencias con la Etapa 1. Las [secuencias actualizadas y editables](docs/uml/README.md) complementan los diagramas originales. El registro y recuperación del coordinador y administrador está implementado. Queda confirmar el alcance de las liquidaciones a proveedores.
 
 El código compila para Java 17 y se verificaron las pruebas unitarias y los recorridos de consola descriptos en este README. Las pruebas se ejecutaron con JDK 24. Las indicaciones de IntelliJ corresponden a la estructura y configuración del proyecto; la verificación de ejecución se realizó desde PowerShell.
 

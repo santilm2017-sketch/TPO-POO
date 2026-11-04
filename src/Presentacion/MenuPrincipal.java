@@ -31,7 +31,8 @@ public class MenuPrincipal {
                 System.out.println("\nRumbo Sur  |  " + Fecha.mostrar(hoy.toString()));
                 System.out.println("1. Catálogo de tours   2. Registrar cliente   3. Programar salida");
                 System.out.println("4. Crear reserva       5. Registrar pago      6. Consultar reserva");
-                System.out.println("7. Modificar o cancelar reserva   8. Operar salida   9. Reportes   0. Salir");
+                System.out.println("7. Modificar o cancelar reserva   8. Operar salida   9. Reportes");
+                System.out.println("10. Personal administrativo   0. Salir");
                 if (!scanner.hasNextLine()) return;
                 try {
                     int opcion = entero("Opción");
@@ -75,7 +76,31 @@ public class MenuPrincipal {
             controladorAdmin.emitirReporteOcupacion();
             controladorAdmin.emitirReportesEconomicos();
         }
+        else if (opcion == 10) menuPersonal();
         else System.out.println("Opción inválida.");
+    }
+
+    private static void menuPersonal() {
+        System.out.println("1. Registrar coordinador/administrador   2. Consultar personal   0. Volver");
+        int opcion = entero("Opción");
+        if (opcion == 0) return;
+        if (opcion == 1) {
+            PersonalAdministrativo persona = new PersonalAdministrativo(
+                    leer("Documento"), leer("Nombre"), leer("Email"), leer("Teléfono"),
+                    leer("Legajo"), leer("Rol (coordinador/administrador)"));
+            controladorAdmin.registrarPersonal(persona);
+            System.out.println("--> Personal registrado exitosamente.");
+        } else if (opcion == 2) {
+            java.util.List<PersonalAdministrativo> personas = controladorAdmin.obtenerPersonal();
+            if (personas.isEmpty()) System.out.println("No hay personal administrativo registrado.");
+            for (PersonalAdministrativo persona : personas) {
+                System.out.println(persona.getRol() + " | Legajo: " + persona.getLegajo()
+                        + " | " + persona.getNombre() + " | Documento: " + persona.getDocumento()
+                        + " | Teléfono: " + persona.getTelefono());
+            }
+        } else {
+            System.out.println("Opción inválida.");
+        }
     }
 
     private static void menuCatalogo() {

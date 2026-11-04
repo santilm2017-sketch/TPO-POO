@@ -10,10 +10,25 @@ import java.util.List;
 public class ControladorAdministrativo {
     private Repositorio<Salida> salidaRepo;
     private Repositorio<Tour> tourRepo;
+    private Repositorio<PersonalAdministrativo> personalRepo;
 
     public ControladorAdministrativo(Repositorio<Tour> tourRepo, Repositorio<Salida> salidaRepo) {
+        this(tourRepo, salidaRepo, new RepositorioPersonal());
+    }
+
+    public ControladorAdministrativo(Repositorio<Tour> tourRepo, Repositorio<Salida> salidaRepo,
+                                    Repositorio<PersonalAdministrativo> personalRepo) {
         this.tourRepo = tourRepo;
         this.salidaRepo = salidaRepo;
+        this.personalRepo = personalRepo;
+    }
+
+    public void registrarPersonal(PersonalAdministrativo persona) {
+        personalRepo.guardar(persona);
+    }
+
+    public List<PersonalAdministrativo> obtenerPersonal() {
+        return personalRepo.obtenerTodos();
     }
 
     public void registrarTour(Tour tour) {
