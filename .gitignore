@@ -1,0 +1,15 @@
+# Archivos locales del IDE
+.idea/
+*.iml
+
+# Compilación y ejecuciones de prueba
+out/
+*.class
+demo-rumbo*/
+tmp/
+
+# Datos de ejecución: conservar localmente, no versionar
+datos/
+*.dat
+*.dat.anterior
+*.dat.nuevo

@@ -1,0 +1,68 @@
+sequenceDiagram
+    actor V as Vendedor
+    participant M as MenuPrincipal
+    participant CV as ControladorVentas
+    participant RR as RepositorioReservas
+    participant R as reserva:Reserva
+    participant P as pago:Pago
+    participant MP as medio:MedioPago
+    participant RS as RepositorioSalidas
+
+    V->>M: Opción 5, reserva, importe, medio y cuotas
+    M->>M: registrarPago()
+    Note over M,MP: El menú crea Efectivo, Transferencia o TarjetaCredito.<br/>La fecha del pago es la fecha de trabajo de la sesión.
+    break Medio desconocido o entrada inválida
+        M-->>V: Operación rechazada
+    end
+    M->>CV: cobrar(numero, hoy, monto, medio, cuotas)
+    CV->>CV: exigirReserva(numero)
+    CV->>RR: buscarPorId(numero como texto)
+    RR-->>CV: reserva o null
+    break Reserva inexistente
+        CV-->>M: IllegalArgumentException
+        M-->>V: Operación rechazada
+    end
+    CV->>R: registrarPago(fecha.toString(), importe, medio, cuotas)
+    R->>P: new Pago(fecha, importe, medio, cuotas)
+    Note over R,P: Creador: Reserva construye el pago.<br/>Pago valida fecha, importe positivo con hasta dos decimales, medio y cuotas.
+    break Datos del pago inválidos
+        P-->>M: Excepción propagada
+        M-->>V: Operación rechazada
+    end
+    R->>R: agregarPago(pago)
+    R->>R: exigirAbierta()
+    Note over R: Valida importe <= saldo, fecha >= fecha de reserva<br/>y al menos diez días hasta la salida.
+    break Reserva cerrada o pago fuera de condiciones
+        R-->>M: Excepción propagada
+        M-->>V: Operación rechazada, pago no agregado
+    end
+    Note over R: Agrega el pago a la lista.
+    R->>R: verificarEstadoPago()
+    R->>R: calcularMontoPagado()
+    alt Capital abonado >= total por 0,30 redondeado
+        Note over R: estado = CONFIRMADA
+    else Capital abonado insuficiente
+        Note over R: estado = PENDIENTE
+    end
+    R-->>CV: pago
+    CV->>RR: actualizar(reserva)
+    RR->>RS: actualizar(reserva.getSalida())
+    Note over RS: ArchivoLista.escribir(datos)
+    break Falla de persistencia
+        RS-->>M: ErrorArchivo propagado
+        M-->>V: Sesión interrumpida
+    end
+    RS-->>RR: retorno
+    RR-->>CV: retorno
+    CV-->>M: pago
+    M->>P: getMontoCobrado()
+    P->>MP: calcularMontoFinal(importe, cuotas)
+    alt TarjetaCredito y cuotas > 1
+        MP-->>P: importe por 1,07
+    else Efectivo, Transferencia o tarjeta en una cuota
+        MP-->>P: importe
+    end
+    Note over P,MP: DIP: Pago depende de MedioPago.<br/>El recargo se resuelve en TarjetaCredito.
+    P-->>M: monto cobrado redondeado
+    M-->>V: Cobro con recargo incluido
+    Note over R,M: El recargo no reduce el saldo de capital.<br/>La opción 6 consulta estado, total, saldo y notas.<br/>No se genera un comprobante documental.

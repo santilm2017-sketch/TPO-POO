@@ -1,4 +1,4 @@
-package Dominio;
+ package Dominio;
 
 import Dominio.Excepciones.RequisitoPasajeroException;
 import java.util.ArrayList;
@@ -22,7 +22,10 @@ public abstract class Tour implements java.io.Serializable {
             throw new IllegalArgumentException("La duración o los cupos no son validos.");
         }
 
-        this.codigo = codigo;
+        if (codigo == null || codigo.isBlank() || nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("Código y nombre de tour obligatorios.");
+        }
+        this.codigo = codigo.trim();
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.duracionDias = duracionDias;
@@ -32,14 +35,16 @@ public abstract class Tour implements java.io.Serializable {
         this.tarifas = new ArrayList<>();
     }
 
-    public abstract boolean validarRequisitosPasajero(Pasajero pasajero)
+    public abstract boolean validarRequisitosPasajero(Pasajero pasajero, String fechaSalida)
             throws RequisitoPasajeroException;
+
+    public abstract String getCategoria();
 
     public Tarifa getTarifaVigente(String fecha, String temporada) {
         Tarifa elegida = null;
 
         for (Tarifa tarifa : tarifas) {
-            if (tarifa.getTemporada().equalsIgnoreCase(temporada)
+            if (tarifa.getTemporada().toLowerCase().equals(temporada.toLowerCase())
                     && tarifa.esVigente(fecha)) {
 
                 if (elegida == null ||
@@ -50,7 +55,7 @@ public abstract class Tour implements java.io.Serializable {
         }
 
         if (elegida == null) {
-            throw new IllegalStateException("No hay tarifa vigente para esa fecha y temporada.");
+            throw new RuntimeException("No hay tarifa vigente para esa fecha y temporada.");
         }
 
         return elegida;
@@ -63,8 +68,8 @@ public abstract class Tour implements java.io.Serializable {
             if (tarifa.esVigente(fecha)) {
 
                 if (elegida != null &&
-                        !elegida.getTemporada().equalsIgnoreCase(tarifa.getTemporada())) {
-                    throw new IllegalStateException("Hay varias temporadas: indique la temporada.");
+                        !elegida.getTemporada().toLowerCase().equals(tarifa.getTemporada().toLowerCase())) {
+                    throw new RuntimeException("Hay varias temporadas: indique la temporada.");
                 }
 
                 if (elegida == null ||
@@ -75,7 +80,7 @@ public abstract class Tour implements java.io.Serializable {
         }
 
         if (elegida == null) {
-            throw new IllegalStateException("No hay tarifas vigentes para esa fecha.");
+            throw new RuntimeException("No hay tarifas vigentes para esa fecha.");
         }
 
         return elegida;
@@ -102,10 +107,14 @@ public abstract class Tour implements java.io.Serializable {
             throw new IllegalArgumentException("No se puede agregar una tarifa nula.");
         }
 
+        for (Tarifa anterior : tarifas) {
+            if (anterior.getFechaVigencia().equals(tarifa.getFechaVigencia())
+                    && anterior.getTemporada().toLowerCase().equals(tarifa.getTemporada().toLowerCase())) {
+                throw new IllegalArgumentException("Ya hay tarifa para esa temporada y vigencia.");
+            }
+        }
         tarifas.add(tarifa);
     }
-
-    // --- GETTERS (agregados para resolver las llamadas en Salida y Guía) ---
 
     public String getCodigo() {
         return codigo;

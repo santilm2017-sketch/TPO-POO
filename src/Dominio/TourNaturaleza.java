@@ -8,11 +8,10 @@ public class TourNaturaleza extends Tour{
         super(codigo, nombre, descripcion, duracionDias, cupoMinimo, cupoMaximo);
     }
 
+    public String getCategoria() { return "naturaleza"; }
+
     @Override
-    public boolean validarRequisitosPasajero(Pasajero pasajero) throws RequisitoPasajeroException {
-        if (pasajero == null) {
-            return false;
-        }
-        return true;
+    public boolean validarRequisitosPasajero(Pasajero pasajero, String fechaSalida) throws RequisitoPasajeroException {
+        return pasajero != null;
     }
 }

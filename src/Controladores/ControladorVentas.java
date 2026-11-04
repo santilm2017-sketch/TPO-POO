@@ -1,19 +1,21 @@
 package Controladores;
 
+import Dominio.Excepciones.CupoSuperadoException;
+import Dominio.Excepciones.RequisitoPasajeroException;
+
 import Dominio.*;
 import Persistencia.*;
-import java.util.List;
 
 public class ControladorVentas {
-    private IRepository<Cliente> clienteRepo;
-    private IRepository<Reserva> reservaRepo;
-    private IRepository<Salida> salidaRepo;
+    private Repositorio<Cliente> clienteRepo;
+    private Repositorio<Reserva> reservaRepo;
+    private Repositorio<Salida> salidaRepo;
     private CalculadoraPrecioReserva calculadoraPrecio;
 
-    public ControladorVentas() {
-        this.clienteRepo = new ClienteRepository();
-        this.reservaRepo = new ReservaRepository();
-        this.salidaRepo = new SalidaRepository();
+    public ControladorVentas(Repositorio<Cliente> clientes, Repositorio<Salida> salidas) {
+        this.clienteRepo = clientes;
+        this.salidaRepo = salidas;
+        this.reservaRepo = new RepositorioReservas(salidas);
         this.calculadoraPrecio = new CalculadoraPrecioReserva();
     }
 
@@ -22,7 +24,7 @@ public class ControladorVentas {
             throw new IllegalArgumentException("El cliente no puede ser nulo.");
         }
         if (clienteRepo.buscarPorId(cliente.getDocumento()) != null) {
-            throw new IllegalStateException("Ya existe un cliente registrado con el documento: " + cliente.getDocumento());
+            throw new RuntimeException("Ya existe un cliente registrado con el documento: " + cliente.getDocumento());
         }
         clienteRepo.guardar(cliente);
     }
@@ -31,11 +33,7 @@ public class ControladorVentas {
         return clienteRepo.buscarPorId(documento);
     }
 
-    public List<Cliente> obtenerTodosClientes() {
-        return clienteRepo.obtenerTodos();
-    }
-
-    public void crearReserva(Reserva reserva, String temporada) {
+    public void crearReserva(Reserva reserva, String temporada) throws RequisitoPasajeroException {
         if (reserva == null || reserva.getSalida() == null) {
             throw new IllegalArgumentException("La reserva o su salida asociada no pueden ser nulas.");
         }
@@ -43,55 +41,55 @@ public class ControladorVentas {
         Salida salida = reserva.getSalida();
         int cantidadPasajeros = reserva.getPasajeros().size();
 
-        // Verificar cupos en la salida (RN)
-        if (!salida.verificarCupoDisponible(cantidadPasajeros)) {
-            throw new IllegalStateException("No hay cupos suficientes disponibles para esa salida.");
+        if (salidaRepo.buscarPorId(salida.getId()) != salida || buscarCliente(reserva.getCliente().getDocumento()) == null) {
+            throw new IllegalArgumentException("La salida y el titular deben estar registrados.");
         }
-
-        // Calcular precio final mediante SRP/Calculadora (RN10, RN11, RN12, RN13)
+        if (reserva.diasHastaSalida(new Fecha(reserva.getFecha())) < 10) throw new RuntimeException("Plazo de pago vencido.");
+        if (!salida.verificarCupoDisponible(cantidadPasajeros)) {
+            throw new CupoSuperadoException("Cantidad de pasajeros inválida o cupo insuficiente.");
+        }
+        for (Pasajero p : reserva.getPasajeros()) reserva.validarPasajero(p);
         calculadoraPrecio.calcularTotalReserva(reserva, temporada);
-
-        // Ocupar cupos en la salida y persistir actualización
-        salida.ocuparCupos(cantidadPasajeros);
-        salidaRepo.actualizar(salida);
-
-        // Guardar la reserva
         reservaRepo.guardar(reserva);
     }
 
-    public void registrarPago(int numeroReserva, Pago pago) {
-        Reserva reserva = reservaRepo.buscarPorId(String.valueOf(numeroReserva));
-        if (reserva == null) {
-            throw new IllegalArgumentException("No se encontro ninguna reserva con el numero: " + numeroReserva);
-        }
-
-        reserva.agregarPago(pago);
-        reservaRepo.actualizar(reserva);
+    public Pago cobrar(int numero, Fecha fecha, double importe, MedioPago medio, int cuotas) {
+        Reserva r = exigirReserva(numero);
+        Pago pago = r.registrarPago(fecha.toString(), importe, medio, cuotas);
+        reservaRepo.actualizar(r);
+        return pago;
     }
 
-    public void cancelarReserva(int numeroReserva, String motivo, boolean porAgencia) {
-        Reserva reserva = reservaRepo.buscarPorId(String.valueOf(numeroReserva));
-        if (reserva == null) {
-            throw new IllegalArgumentException("No se encontro ninguna reserva con el numero: " + numeroReserva);
-        }
-
-        reserva.setEstado("CANCELADA");
-
-        // Liberar los cupos ocupados por los pasajeros
-        Salida salida = reserva.getSalida();
-        if (salida != null) {
-            salida.liberarCupos(reserva.getPasajeros().size());
-            salidaRepo.actualizar(salida);
-        }
-
-        reservaRepo.actualizar(reserva);
+    public void contratar(int numero, String documento, ServicioAdicional servicio, Fecha fecha) {
+        Reserva r = exigirReserva(numero);
+        r.contratar(documento, servicio, fecha);
+        reservaRepo.actualizar(r);
     }
 
-    public Reserva buscarReserva(int numero) {
-        return reservaRepo.buscarPorId(String.valueOf(numero));
+    public void reemplazar(int numero, String documento, Pasajero nuevo, Fecha fecha)
+            throws RequisitoPasajeroException {
+        Reserva r = exigirReserva(numero);
+        r.reemplazar(documento, nuevo, fecha);
+        reservaRepo.actualizar(r);
     }
 
-    public List<Reserva> obtenerTodasReservas() {
-        return reservaRepo.obtenerTodos();
+    public void ajustar(int numero, String motivo, double diferencia, Fecha fecha) {
+        Reserva r = exigirReserva(numero);
+        r.ajustar(motivo, diferencia, fecha);
+        reservaRepo.actualizar(r);
     }
+
+    public CancelacionReserva cancelarReserva(int numero, String motivo, boolean porAgencia, Fecha fecha) {
+        Reserva r = exigirReserva(numero);
+        r.cancelar(fecha, motivo, porAgencia);
+        reservaRepo.actualizar(r);
+        return r.getCancelacion();
+    }
+
+    public Reserva exigirReserva(int numero) {
+        Reserva r = reservaRepo.buscarPorId("" + numero);
+        if (r == null) throw new IllegalArgumentException("Reserva inexistente.");
+        return r;
+    }
+
 }

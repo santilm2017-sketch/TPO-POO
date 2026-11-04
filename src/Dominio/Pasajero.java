@@ -14,7 +14,12 @@ public class Pasajero implements Serializable {
     private List<ContratacionServicio> contrataciones;
 
     public Pasajero(String documento, String nombre, String fechaNacimiento, String tipo, String contactoEmergencia, String restricciones) {
-        this.documento = documento;
+        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank()
+                || tipo == null || tipo.isBlank() || contactoEmergencia == null || contactoEmergencia.isBlank()) {
+            throw new IllegalArgumentException("Documento, nombre y contacto de emergencia obligatorios.");
+        }
+        new Fecha(fechaNacimiento);
+        this.documento = documento.trim();
         this.nombre = nombre;
         this.fechaNacimiento = fechaNacimiento;
         this.tipo = tipo;
@@ -23,8 +28,16 @@ public class Pasajero implements Serializable {
         this.contrataciones = new ArrayList<>();
     }
 
+    public int edadEn(String fecha) {
+        return new Fecha(fechaNacimiento).edadEn(new Fecha(fecha));
+    }
+
+    public void contratarServicio(ServicioAdicional servicio, String fecha) {
+        agregarContratacion(new ContratacionServicio(this, servicio, fecha));
+    }
+
     public void agregarContratacion(ContratacionServicio cs) {
-        if (cs != null) {
+        if (cs != null && cs.getPasajero() == this) {
             this.contrataciones.add(cs);
         }
     }

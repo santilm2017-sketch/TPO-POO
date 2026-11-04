@@ -1,0 +1,89 @@
+sequenceDiagram
+    actor V as Vendedor
+    participant M as MenuPrincipal
+    participant CV as ControladorVentas
+    participant CO as ControladorOperaciones
+    participant S as salida:Salida
+    participant R as reserva:Reserva
+    participant P as pasajero:Pasajero
+    participant C as CalculadoraPrecioReserva
+    participant E as promo:EstrategiaPromocion
+    participant RR as RepositorioReservas
+    participant RS as RepositorioSalidas
+
+    V->>M: Opción 4 y datos solicitados
+    M->>M: crearReserva()
+    M->>CV: buscarCliente(documento)
+    CV-->>M: cliente o null
+    break Cliente inexistente
+        M-->>V: Error: Cliente no encontrado
+    end
+    M->>CO: buscarSalida(idSalida)
+    CO-->>M: salida o null
+    break Salida inexistente
+        M-->>V: Error: Salida no encontrada
+    end
+    Note over M,S: El menú lee temporada, vendedor y cantidad.
+    M->>S: verificarCupoDisponible(cantidad)
+    S-->>M: disponible
+    break Sin cupo o cantidad inválida
+        M-->>V: Operación rechazada (CupoSuperadoException)
+    end
+    M->>R: new Reserva(hoy.toString(), cliente, vendedor, salida)
+    loop Por cada pasajero
+        M->>M: leerPasajero()
+        M->>P: new Pasajero(documento, nombre, nacimiento, tipo, contacto, restricciones)
+        opt Tour de aventura
+            Note over M,P: El menú crea ServicioAdicional Seguro de viaje con precio ingresado.
+            M->>P: contratarServicio(seguro, hoy.toString())
+            Note over P: Crea ContratacionServicio (Creador).
+        end
+        M->>R: agregarPasajero(p)
+    end
+    M->>CV: crearReserva(reserva, temporada)
+    Note over CV: Comprueba titular y salida registrados y plazo de pago.
+    CV->>S: verificarCupoDisponible(cantidadPasajeros)
+    S-->>CV: disponible
+    loop Por cada pasajero
+        CV->>R: validarPasajero(p)
+        Note over R,P: Comprueba categoría por edad y delega requisitos al Tour.
+    end
+    break Datos, plazo, cupo o requisitos inválidos
+        CV-->>M: Excepción
+        M-->>V: Operación rechazada
+    end
+    CV->>C: calcularTotalReserva(reserva, temporada)
+    Note over C: Tour.getTarifaVigente(fechaInicio, temporada).<br/>Calcula subtotal por tipo de pasajero (SRP).
+    C->>C: obtenerMejorDescuento(reserva, subtotalPasajes)
+    loop Por cada promoción disponible
+        C->>E: esAplicable(reserva)
+        E-->>C: aplicable
+        opt Aplicable
+            C->>E: calcularDescuento(reserva, subtotalPasajes)
+            E-->>C: descuento
+            Note over C: Conserva el mayor, sin acumular (OCP).
+        end
+    end
+    C->>C: calcularTotalServiciosAdicionales(reserva)
+    C->>R: setTotal(totalFinal)
+    C-->>CV: totalFinal
+    Note over C,M: Si no hay tarifa válida, la excepción vuelve al menú y no se guarda.
+    CV->>RR: guardar(reserva)
+    Note over RR: Comprueba que no se repita el número.
+    RR->>R: confirmarAlta()
+    R->>S: registrarReserva(this)
+    S->>S: actualizarOcupacion()
+    R->>R: verificarEstadoPago()
+    RR->>RR: actualizar(reserva)
+    RR->>RS: actualizar(reserva.getSalida())
+    Note over RS: ArchivoLista.escribir(datos): salida y reservas juntas.
+    alt Escritura completada
+        RS-->>RR: retorno
+        RR-->>CV: retorno
+        CV-->>M: retorno
+        M-->>V: Número y total de la reserva
+    else ErrorArchivo
+        RS-->>M: Excepción propagada
+        M-->>V: Sesión interrumpida
+    end
+    Note over M: Fechas de entrada DD/MM/AAAA.<br/>Las excepciones de entrada o duplicados también interrumpen la operación.<br/>No hay reversión automática en memoria ante un fallo de archivo.

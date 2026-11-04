@@ -10,9 +10,9 @@ public class Tarifa implements Serializable {
 
     public Tarifa(String temporada, String fechaVigencia, double precioBase) {
         if (temporada == null ||
-                (!temporada.equalsIgnoreCase("Baja") &&
-                        !temporada.equalsIgnoreCase("Media") &&
-                        !temporada.equalsIgnoreCase("Alta"))) {
+                (!temporada.toLowerCase().equals("baja") &&
+                        !temporada.toLowerCase().equals("media") &&
+                        !temporada.toLowerCase().equals("alta"))) {
             throw new IllegalArgumentException("La temporada debe ser Baja, Media o Alta.");
         }
 
@@ -20,7 +20,8 @@ public class Tarifa implements Serializable {
             throw new IllegalArgumentException("La fecha debe tener formato AAAA-MM-DD.");
         }
 
-        if (precioBase < 0) {
+        new Fecha(fechaVigencia);
+        if (!Importes.esValido(precioBase)) {
             throw new IllegalArgumentException("El precio no puede ser negativo.");
         }
 
