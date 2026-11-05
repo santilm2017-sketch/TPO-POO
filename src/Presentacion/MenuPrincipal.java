@@ -13,6 +13,7 @@ public class MenuPrincipal {
     private static ControladorVentas controladorVentas;
     private static ControladorOperaciones controladorOperaciones;
     private static ControladorAdministrativo controladorAdmin;
+    private static Repositorio<Reserva> reservas;
 
     private static Fecha hoy;
 
@@ -20,6 +21,7 @@ public class MenuPrincipal {
         try {
             Repositorio<Tour> tourRepo = new RepositorioTours();
             Repositorio<Salida> salidaRepo = new RepositorioSalidas();
+            reservas = new RepositorioReservas(salidaRepo);
             Repositorio<Cliente> clientes = new RepositorioClientes();
             controladorVentas = new ControladorVentas(clientes, salidaRepo);
             controladorOperaciones = new ControladorOperaciones(salidaRepo, tourRepo);
@@ -28,14 +30,22 @@ public class MenuPrincipal {
             DatosIniciales.cargar(clientes, tourRepo, salidaRepo, hoy);
             while (true) {
                 controladorOperaciones.controlarPlazos(hoy);
-                System.out.println("\nRumbo Sur  |  " + Fecha.mostrar(hoy.toString()));
-                System.out.println("1. Catálogo de tours   2. Registrar cliente   3. Programar salida");
-                System.out.println("4. Crear reserva       5. Registrar pago      6. Consultar reserva");
-                System.out.println("7. Modificar o cancelar reserva   8. Operar salida   9. Reportes");
-                System.out.println("10. Personal administrativo   0. Salir");
+                System.out.println("\n=== RUMBO SUR - MENÚ PRINCIPAL ===");
+                System.out.println("Fecha de trabajo: " + Fecha.mostrar(hoy.toString()));
+                System.out.println("1. Catálogo de tours y personal");
+                System.out.println("2. Registrar cliente");
+                System.out.println("3. Programar salida");
+                System.out.println("4. Crear reserva");
+                System.out.println("5. Registrar pago");
+                System.out.println("6. Consultar reserva por número");
+                System.out.println("7. Modificar o cancelar reserva");
+                System.out.println("8. Operar salida");
+                System.out.println("9. Reportes");
+                System.out.println("10. Listar reservas");
+                System.out.println("0. Salir");
                 if (!scanner.hasNextLine()) return;
                 try {
-                    int opcion = entero("Opción");
+                    int opcion = entero("Seleccione una opción");
                     if (opcion == 0) return;
                     procesarOpcion(opcion);
                 } catch (ErrorArchivo e) {
@@ -76,7 +86,7 @@ public class MenuPrincipal {
             controladorAdmin.emitirReporteOcupacion();
             controladorAdmin.emitirReportesEconomicos();
         }
-        else if (opcion == 10) menuPersonal();
+        else if (opcion == 10) listarReservas();
         else System.out.println("Opción inválida.");
     }
 
@@ -104,13 +114,14 @@ public class MenuPrincipal {
     }
 
     private static void menuCatalogo() {
-        System.out.println("1. Registrar tour   2. Cargar tarifa   3. Agregar actividad   4. Consultar catálogo   0. Volver");
+        System.out.println("1. Registrar tour   2. Cargar tarifa   3. Agregar actividad   4. Consultar catálogo   5. Personal administrativo   0. Volver");
         int opcion = entero("Opción");
         if (opcion == 0) return;
         else if (opcion == 1) registrarTour();
         else if (opcion == 2) cargarTarifa();
         else if (opcion == 3) cargarActividad();
         else if (opcion == 4) catalogo();
+        else if (opcion == 5) menuPersonal();
         else System.out.println("Opción inválida.");
     }
 
@@ -318,6 +329,26 @@ public class MenuPrincipal {
         Reserva r = controladorVentas.exigirReserva(entero("Reserva"));
         System.out.println(r.getEstado() + " | total $ " + Importes.mostrar(r.getTotal()) + " | saldo $ " + Importes.mostrar(r.saldoPendiente()));
         System.out.println("Notas de ajuste: " + r.getNotas());
+    }
+
+    private static void listarReservas() {
+        java.util.List<Reserva> lista = reservas.obtenerTodos();
+        if (lista.isEmpty()) {
+            System.out.println("No hay reservas registradas.");
+            return;
+        }
+        System.out.println("=== RESERVAS REGISTRADAS ===");
+        System.out.println("Las reservas PENDIENTES y CONFIRMADAS están activas.");
+        for (Reserva reserva : lista) {
+            System.out.println("Reserva " + reserva.getNumero()
+                    + " | Titular: " + reserva.getCliente().getNombre()
+                    + " | Tour: " + reserva.getSalida().getTour().getNombre()
+                    + " | Salida: " + reserva.getSalida().getId()
+                    + " | Fecha: " + Fecha.mostrar(reserva.getSalida().getFechaInicio())
+                    + " | Estado: " + reserva.getEstado()
+                    + " | Total: $ " + Importes.mostrar(reserva.getTotal())
+                    + " | Saldo: $ " + Importes.mostrar(reserva.saldoPendiente()));
+        }
     }
 
     private static void catalogo() {

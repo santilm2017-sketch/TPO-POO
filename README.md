@@ -1,159 +1,181 @@
-# Agencia de Turismo Rumbo Sur
-Trabajo Práctico Obligatorio de Programación Orientada a Objetos — Propuesta B.
+# TPO POO - Agencia de Turismo Rumbo Sur
 
 ## Integrantes
 
-| Integrante | Legajo |
-|---|---|
-| Santiago Lopez Monea | 1213045 |
-| Carlos Thomas Rivas | 1208227 |
-| Bryan Zornada Alvarez Vega | 1210869 |
+- Santiago Lopez Monea — Legajo 1213045.
+- Carlos Thomas Rivas — Legajo 1208227.
+- Bryan Zornada Alvarez Vega — Legajo 1210869.
 
 Docente: María Angela León.
 
 ## Descripción del proyecto
 
-Rumbo Sur es un sistema de consola para una agencia que organiza tours culturales, de naturaleza y de aventura. Permite administrar el catálogo, programar salidas y registrar reservas con sus pasajeros, adicionales y pagos.
+Este proyecto corresponde al Trabajo Práctico Obligatorio de la materia Programación Orientada a Objetos.
 
-El programa reúne la venta y la operación de cada salida. Controla los lugares disponibles, calcula los precios y las devoluciones, y permite consultar los datos necesarios para realizar el viaje y liquidar los honorarios del guía.
+La propuesta elegida es:
+
+**Propuesta B: Agencia de Turismo Rumbo Sur.**
+
+El sistema permite organizar tours culturales, de naturaleza y de aventura. Se pueden registrar clientes, programar salidas, realizar reservas con uno o más pasajeros, contratar servicios adicionales y registrar pagos.
+
+También permite asignar guías y vehículos, emitir listas de pasajeros, cancelar o modificar reservas y consultar reportes de la agencia.
+
+La idea principal del trabajo es aplicar los conceptos de Programación Orientada a Objetos vistos en la cursada, junto con los principios SOLID y patrones GRASP presentados en la Etapa 1.
 
 ## Repositorio
 
-El proyecto se encuentra en [TPO-POO en GitHub](https://github.com/santilm2017-sketch/TPO-POO). La revisión de esta entrega se está realizando en la rama `revision-tpo`.
+[TPO-POO en GitHub](https://github.com/santilm2017-sketch/TPO-POO)
 
 ## Organización del proyecto
 
-La estructura principal es la siguiente. En `Dominio` se muestran algunas de las clases más importantes.
+El código está separado en paquetes para que cada parte tenga una responsabilidad clara. La siguiente estructura muestra los archivos principales.
 
 ```text
-TPO-POO/
-├── src/
-│   ├── Presentacion/
-│   │   ├── MenuPrincipal.java
-│   │   └── DatosIniciales.java
-│   ├── Controladores/
-│   │   ├── ControladorVentas.java
-│   │   ├── ControladorOperaciones.java
-│   │   └── ControladorAdministrativo.java
-│   ├── Dominio/
-│   │   ├── Tour.java
-│   │   ├── TourAventura.java
-│   │   ├── TourCultural.java
-│   │   ├── TourNaturaleza.java
-│   │   ├── Salida.java
-│   │   ├── Reserva.java
-│   │   ├── Cliente.java
-│   │   ├── Pasajero.java
-│   │   ├── Pago.java
-│   │   ├── CalculadoraPrecioReserva.java
-│   │   └── Excepciones/
-│   │       ├── CupoSuperadoException.java
-│   │       └── RequisitoPasajeroException.java
-│   ├── Persistencia/
-│   │   ├── Repositorio.java
-│   │   ├── RepositorioClientes.java
-│   │   ├── RepositorioTours.java
-│   │   ├── RepositorioSalidas.java
-│   │   ├── RepositorioReservas.java
-│   │   ├── ArchivoLista.java
-│   │   └── ErrorArchivo.java
-│   └── Test/
-│       ├── CalculadoraPrecioReservaTest.java
-│       └── ReservaSalidaTest.java
-├── docs/
-│   ├── TPO POO (1).pdf
-│   ├── Revision-Etapa-2.md
-│   ├── Plan_Pruebas_Funcionales.md
-│   └── demo.txt
-└── README.md
+src/
+ ├── Presentacion/
+ │    ├── MenuPrincipal.java
+ │    └── DatosIniciales.java
+ │
+ ├── Dominio/
+ │    ├── Tour.java
+ │    ├── TourCultural.java
+ │    ├── TourNaturaleza.java
+ │    ├── TourAventura.java
+ │    ├── Actividad.java
+ │    ├── Tarifa.java
+ │    ├── Salida.java
+ │    ├── Reserva.java
+ │    ├── Cliente.java
+ │    ├── Pasajero.java
+ │    ├── Pago.java
+ │    ├── Personal.java
+ │    ├── PersonalAdministrativo.java
+ │    ├── Guia.java
+ │    ├── Vendedor.java
+ │    ├── Vehiculo.java
+ │    ├── Proveedor.java
+ │    ├── ServicioAdicional.java
+ │    ├── ContratacionServicio.java
+ │    ├── CalculadoraPrecioReserva.java
+ │    └── Excepciones/
+ │
+ ├── Controladores/
+ │    ├── ControladorVentas.java
+ │    ├── ControladorOperaciones.java
+ │    └── ControladorAdministrativo.java
+ │
+ ├── Persistencia/
+ │    ├── Repositorio.java
+ │    ├── RepositorioClientes.java
+ │    ├── RepositorioTours.java
+ │    ├── RepositorioSalidas.java
+ │    ├── RepositorioReservas.java
+ │    ├── RepositorioPersonal.java
+ │    ├── ArchivoLista.java
+ │    └── ErrorArchivo.java
+ │
+ └── Test/
+      ├── CalculadoraPrecioReservaTest.java
+      ├── ReservaSalidaTest.java
+      ├── PersonalAdministrativoTest.java
+      └── RepositorioPersonalTest.java
 ```
 
-La carpeta `datos` se crea al guardar información. Contiene los archivos de clientes, tours y salidas con sus reservas. Para recuperar los datos entre ejecuciones, se debe abrir el programa desde el mismo directorio de trabajo.
+La carpeta `docs` contiene la Entrega 1, los documentos de revisión, el plan de pruebas, una demostración por consola y las secuencias actualizadas.
 
 ## Funcionalidades principales
 
-- Registrar tours, sus actividades, proveedores asociados y tarifas por temporada y vigencia.
-- Programar salidas y controlar sus cupos y estados.
-- Registrar clientes y crear reservas con uno o más pasajeros.
-- Calcular precios según el tipo de pasajero y aplicar la promoción más favorable.
-- Contratar servicios por pasajero y exigir seguro de viaje en los tours de aventura.
-- Registrar señas y pagos en efectivo, transferencia o tarjeta, incluyendo el recargo por cuotas.
+El sistema permite:
+
+- Registrar y consultar tours, actividades, proveedores y tarifas.
+- Registrar clientes y programar salidas.
+- Crear reservas y controlar los lugares disponibles.
+- Calcular precios según el pasajero, la temporada y las promociones.
+- Contratar adicionales por pasajero, incluido el seguro obligatorio de aventura.
+- Registrar señas y pagos con efectivo, transferencia o tarjeta.
+- Consultar una reserva por número o listar todas las reservas.
 - Reemplazar pasajeros, cancelar reservas y registrar notas de ajuste.
-- Asignar guía y vehículo, emitir la lista de pasajeros, iniciar y cerrar salidas.
-- Liquidar honorarios del guía y consultar ocupación, ventas por vendedor, ingresos por tour y cancelaciones.
+- Asignar guía y transporte, emitir la lista de pasajeros e iniciar y cerrar salidas.
+- Calcular honorarios de guías y consultar reportes.
+- Registrar y consultar coordinadores y administradores.
+- Guardar y recuperar los datos mediante archivos.
 
-El control de vencimientos se realiza al abrir el sistema y antes de cada operación, utilizando la fecha de trabajo ingresada.
+## Conceptos utilizados
 
-## Conceptos y herramientas utilizados
-
-El proyecto utiliza Java y las herramientas de la cursada.
-
-| Concepto | Aplicación |
+| Concepto | Uso dentro del sistema |
 |---|---|
-| Herencia y clases abstractas | `Tour` tiene las subclases `TourCultural`, `TourNaturaleza` y `TourAventura`. `Personal` es la base de `Guia` y `Vendedor`. |
-| Interfaces y polimorfismo | Los medios de pago, las promociones y las políticas de cancelación resuelven sus cálculos mediante implementaciones de una interfaz común. |
-| Encapsulamiento | Las entidades conservan sus datos en atributos privados o protegidos y validan las operaciones mediante sus métodos. Las listas se devuelven como copias. |
-| Colecciones | Se usan listas para reservas, pasajeros y actividades, y mapas para agrupar los reportes económicos. |
-| Ordenamiento | `Actividad` implementa `Comparable` por día y orden. La lista de pasajeros se ordena por nombre con `Comparator`. |
-| Excepciones | Se rechazan operaciones inválidas y se usan excepciones propias para cupos y requisitos del pasajero. El menú maneja errores y cierra el lector con `finally`. |
-| Archivos | Los repositorios leen y escriben objetos con `Serializable`, `ObjectInputStream` y `ObjectOutputStream`. |
-
-Se utiliza IntelliJ IDEA para trabajar con el proyecto y Git para el control de versiones. La compilación requiere únicamente el JDK.
+| Herencia y clases abstractas | Tour es la base de los tres tipos de viaje. Personal es la base de Guia, Vendedor y PersonalAdministrativo. |
+| Encapsulamiento | Los datos se administran mediante constructores y métodos que validan las operaciones. |
+| Interfaces y polimorfismo | Se aplican en medios de pago, promociones, políticas de cancelación y repositorios. |
+| Colecciones | Las listas reúnen pasajeros, reservas, actividades y pagos. Los mapas agrupan los reportes económicos. |
+| Comparable y Comparator | Ordenan las actividades por día y orden, y la lista de pasajeros por nombre. |
+| Excepciones | Informan errores de datos, cupos, requisitos de pasajeros y archivos. |
+| Lectura y escritura de archivos | Conservan clientes, tours, salidas con sus reservas y personal administrativo. |
 
 ## Justificación de las decisiones de diseño
 
-Se mantuvo la separación entre presentación, controladores, dominio y persistencia planteada en la Etapa 1. Esto permite ubicar cada regla y modificarla sin tener que recorrer todo el menú.
+### Separación de responsabilidades
 
-Los tres principios SOLID y los cuatro patrones GRASP elegidos se aplican de la siguiente manera.
+El menú recibe los datos del usuario. Los controladores coordinan las operaciones y las clases del dominio aplican las reglas de la agencia. Los repositorios se encargan de guardar y recuperar la información.
 
-| Principio o patrón | Decisión |
+Esta organización permite ubicar cada operación sin concentrar todo el programa en una sola clase.
+
+### Principios SOLID
+
+- **SRP:** CalculadoraPrecioReserva calcula los precios y las políticas de cancelación calculan las devoluciones. Reserva conserva sus pasajeros, pagos y estado.
+- **OCP:** las promociones implementan EstrategiaPromocion. La calculadora las compara y aplica únicamente el descuento más favorable.
+- **DIP:** Pago utiliza la interfaz MedioPago. Efectivo, Transferencia y TarjetaCredito resuelven el cálculo correspondiente.
+
+### Patrones GRASP
+
+- **Experto en Información:** Salida conoce los adicionales vendidos y Guia calcula sus honorarios con la información de la salida y su tarifa diaria.
+- **Creador:** Reserva crea sus pagos y Pasajero crea sus contrataciones de servicios.
+- **Controlador:** las solicitudes se coordinan mediante ControladorVentas, ControladorOperaciones y ControladorAdministrativo.
+- **Fabricación Pura:** los repositorios resuelven la persistencia fuera de las entidades de la agencia.
+
+### Guardado de datos
+
+Las reservas se guardan junto con sus salidas para conservar relacionados los pasajeros, pagos y cupos. Los coordinadores y administradores se guardan en un archivo separado.
+
+La carpeta `datos` se genera durante la ejecución. Para recuperar lo guardado, se debe volver a ejecutar desde el mismo directorio de trabajo. Sus archivos son locales y están excluidos del repositorio mediante `.gitignore`.
+
+## Clases principales
+
+| Clase | Responsabilidad |
 |---|---|
-| SRP — Responsabilidad única | `Reserva` administra sus datos y estado. `CalculadoraPrecioReserva` calcula el precio y las políticas calculan las devoluciones. |
-| OCP — Abierto/cerrado | La calculadora recorre las implementaciones de `EstrategiaPromocion`. Se puede incorporar otra promoción mediante `agregarPromocion`. |
-| DIP — Inversión de dependencias | `Pago` utiliza la interfaz `MedioPago`, que implementan `Efectivo`, `Transferencia` y `TarjetaCredito`. |
-| Experto | `Salida` suma los adicionales de sus reservas y `Guia` calcula los honorarios con su tarifa diaria. |
-| Creador | `Reserva` crea los pagos y `Pasajero` crea sus contrataciones de servicios. |
-| Controlador | Los tres controladores reciben las solicitudes del menú y coordinan las operaciones. |
-| Fabricación pura | Los repositorios se encargan de los archivos, una tarea separada de las entidades de la agencia. |
-
-Las reservas se guardan junto con su salida para recuperar una sola versión de los cupos, pagos y pasajeros. Los nombres de los repositorios se pasaron a castellano. Las diferencias con el modelo y su justificación están desarrolladas en el [informe de la Etapa 2](docs/Revision-Etapa-2.md). El diseño original se encuentra en la [entrega de la Etapa 1](docs/TPO%20POO%20(1).pdf).
-
-## Clases principales y responsabilidades
-
-| Clase o grupo | Responsabilidad |
-|---|---|
-| `MenuPrincipal` y `DatosIniciales` | Recibir los datos del usuario y cargar los ejemplos iniciales. |
-| `ControladorVentas` | Coordinar clientes, reservas, pagos, adicionales, reemplazos, ajustes y cancelaciones. |
-| `ControladorOperaciones` | Programar salidas, asignar recursos, controlar vencimientos y coordinar el inicio y cierre. |
-| `ControladorAdministrativo` | Administrar el catálogo, emitir reportes y consultar honorarios. |
-| `Tour`, sus subclases, `Actividad` y `Tarifa` | Representar el recorrido, sus requisitos, el itinerario y los precios vigentes. |
-| `Salida` | Reunir fecha, cupo, reservas, guía, vehículo y estado de un viaje concreto. |
-| `Reserva`, `Cliente` y `Pasajero` | Relacionar al titular con el viaje y sus participantes, conservando pagos y modificaciones. |
-| `CalculadoraPrecioReserva`, `PromocionAnticipada` y `PromocionGrupo` | Calcular pasajes, adicionales y el descuento que corresponde. |
-| `Pago` y las implementaciones de `MedioPago` | Registrar el capital abonado y calcular el importe cobrado según el medio y las cuotas. |
-| `CancelacionReserva` y las políticas de cancelación | Conservar el motivo y las devoluciones calculadas para el cliente o la agencia. |
-| `Guia`, `Vendedor` y `Vehiculo` | Representar al personal involucrado y al transporte asignado. |
-| `Proveedor`, `ServicioAdicional` y `ContratacionServicio` | Registrar proveedores de actividades y servicios contratados por cada pasajero. |
-| `Repositorio`, sus implementaciones y `ArchivoLista` | Buscar, guardar y recuperar la información. |
-| `Fecha` e `Importes` | Centralizar las operaciones de calendario y el manejo de importes. |
+| MenuPrincipal.java | Muestra el menú, recibe datos y presenta los resultados. |
+| DatosIniciales.java | Carga los ejemplos iniciales cuando corresponde. |
+| Tour.java y sus subclases | Representan los tours y sus requisitos. |
+| Actividad.java y Tarifa.java | Representan el itinerario y los precios por temporada y vigencia. |
+| Salida.java | Administra fechas, cupos, reservas, recursos y estado del viaje. |
+| Reserva.java | Reúne titular, vendedor, pasajeros, pagos, modificaciones y cancelación. |
+| Cliente.java y Pasajero.java | Representan al titular y a quienes participan del viaje. |
+| CalculadoraPrecioReserva.java | Calcula pasajes, adicionales y promociones. |
+| Pago.java | Conserva el capital abonado, la fecha, las cuotas y el medio de pago. |
+| Guia.java y Vendedor.java | Representan al personal de operación y venta. |
+| PersonalAdministrativo.java | Registra los datos del coordinador y administrador, incluido su legajo. |
+| ServicioAdicional.java y ContratacionServicio.java | Representan el servicio y su contratación individual. |
+| ControladorVentas.java | Coordina clientes, reservas, pagos y modificaciones. |
+| ControladorOperaciones.java | Coordina salidas, recursos, vencimientos, listas, inicio y cierre. |
+| ControladorAdministrativo.java | Administra catálogo y personal, calcula honorarios y genera reportes. |
+| Repositorios y ArchivoLista.java | Buscan, guardan y recuperan los datos. |
+| Fecha.java e Importes.java | Reúnen el manejo de fechas y de importes. |
 
 ## Cómo ejecutar el proyecto
 
-Se necesita un **JDK 17 o superior**. La versión se verificó con Temurin 24, compilando para Java 17 mediante `--release 17`. La configuración de IntelliJ incluida en el proyecto apunta a JDK 24.
+Se necesita **JDK 17 o superior**. El proyecto fue compilado con Temurin 24 utilizando `--release 17`. No requiere bibliotecas externas.
 
 ### Desde IntelliJ IDEA
 
-1. Abrir la carpeta `TPO-POO`.
-2. En **File → Project Structure → Project**, seleccionar el JDK instalado. Si se usa JDK 17, seleccionar también el nivel de lenguaje 17.
+1. Abrir la carpeta del proyecto.
+2. Seleccionar el JDK instalado en **File → Project Structure → Project**.
 3. Verificar que `src` esté marcada como **Sources Root**.
-4. Abrir `src/Presentacion/MenuPrincipal.java` y ejecutar el método `main` con el botón verde.
-5. En la configuración de ejecución, usar `Presentacion.MenuPrincipal` como clase principal y la carpeta del proyecto como **Working directory**.
-
-Al iniciar, ingresar la fecha de trabajo en formato **DD/MM/AAAA**, por ejemplo `03/11/2026`. Para probar otro día, salir y volver a ejecutar con la nueva fecha. Los importes se ingresan sin separador de miles y con coma decimal, por ejemplo `25200,50`.
+4. Abrir `src/Presentacion/MenuPrincipal.java` y ejecutar su método `main`.
+5. Usar la carpeta del proyecto como **Working directory** para conservar los datos entre ejecuciones.
 
 ### Desde consola
 
-Abrir PowerShell en la raíz del proyecto. Los comandos `java` y `javac` deben estar disponibles en el PATH.
+Abrir PowerShell en la raíz del proyecto, con `java` y `javac` disponibles en el PATH:
 
 ```powershell
 New-Item -ItemType Directory -Force out | Out-Null
@@ -163,39 +185,11 @@ java -cp out Presentacion.MenuPrincipal
 
 ## Cómo probar el sistema
 
-La opción **10 → 1** registra coordinador o administrador con documento, nombre, email, teléfono, legajo y rol. **10 → 2** consulta ambos roles. Los cuatro datos obligatorios se validan y se rechazan legajos o documentos repetidos. Se recuperan al reiniciar desde el mismo directorio, mediante `datos/personal.dat`.
+### 1. Datos iniciales
 
-`PersonalAdministrativo` hereda de `Personal`. Conserva su propio legajo; Vendedor mantiene el suyo y Guia utiliza matrícula/legajo. La estructura serializada de esas clases existentes no se modificó.
+Al ejecutar MenuPrincipal, se ingresa la fecha de trabajo en formato **DD/MM/AAAA**, por ejemplo `05/11/2026`. Los importes se ingresan sin separador de miles y con coma decimal, por ejemplo `15900,00`.
 
-Para ejecutar la prueba de archivos de personal, después de compilar, usar una carpeta nueva (si existe, elegir otro nombre):
-
-```powershell
-$clasesPersonal = Join-Path (Get-Location).Path 'out'
-$pruebaPersonal = Join-Path $env:TEMP 'rumbo-personal-prueba-01'
-New-Item -ItemType Directory -Path $pruebaPersonal -ErrorAction Stop | Out-Null
-Push-Location $pruebaPersonal
-try { java -cp $clasesPersonal Test.RepositorioPersonalTest } finally { Pop-Location }
-```
-
-### Opciones del menú
-
-| Opción | Uso |
-|---|---|
-| 1. Catálogo de tours | Registrar tours, agregar tarifas y actividades, o consultar el catálogo. |
-| 2. Registrar cliente | Cargar los datos del titular de una reserva. |
-| 3. Programar salida | Elegir un tour existente, las fechas y el cupo. |
-| 4. Crear reserva | Elegir cliente y salida, registrar vendedor y pasajeros y calcular el precio. |
-| 5. Registrar pago | Indicar reserva, importe, medio de pago y cuotas. |
-| 6. Consultar reserva | Ver estado, total, saldo y notas de ajuste. |
-| 7. Modificar o cancelar reserva | Contratar adicionales, reemplazar pasajeros, cancelar o registrar un ajuste. |
-| 8. Operar salida | Asignar guía y vehículo, emitir la lista, iniciar, cerrar o liquidar honorarios. |
-| 9. Reportes | Consultar ocupación, ventas por vendedor, ingresos por tour y cancelaciones. |
-| 10. Personal administrativo | Registrar y consultar coordinador y administrador. |
-| 0. Salir | Terminar la sesión. |
-
-### Datos precargados
-
-Los siguientes ejemplos corresponden a una primera ejecución en una carpeta sin datos, con fecha de trabajo **03/11/2026**. Al volver a abrir, se recupera la información guardada. El año de las salidas de ejemplo se determina en la primera carga.
+En una primera ejecución con fecha de trabajo del año 2026, se cargan cinco clientes y cinco tours con salidas en enero de 2027:
 
 | Documento | Cliente |
 |---|---|
@@ -205,35 +199,63 @@ Los siguientes ejemplos corresponden a una primera ejecución en una carpeta sin
 | 30000004 | Juan Vera |
 | 30000005 | Sara Cruz |
 
-Todos los viajes de ejemplo duran un día, tienen cupo mínimo de dos pasajeros, una actividad a las 09:00 y una tarifa de temporada baja.
-
-| Código de salida | Viaje | Cupo máximo | Tarifa por pasajero |
+| Salida | Tour | Categoría | Tarifa baja |
 |---|---|---|---|
-| RS01_15/01/2027 | Paseo por Salta | 12 | $20.000,00 |
-| RS02_16/01/2027 | Lagos de Bariloche | 10 | $22.500,00 |
-| RS03_17/01/2027 | Bodegas de Mendoza | 12 | $25.000,00 |
-| RS04_18/01/2027 | Cataratas del Iguazú | 10 | $27.500,00 |
-| RS05_19/01/2027 | Trekking en El Chaltén | 8 | $30.000,00 |
+| RS01_15/01/2027 | Paseo por Salta | Cultural | $20.000,00 |
+| RS02_16/01/2027 | Lagos de Bariloche | Naturaleza | $22.500,00 |
+| RS03_17/01/2027 | Bodegas de Mendoza | Cultural | $25.000,00 |
+| RS04_18/01/2027 | Cataratas del Iguazú | Naturaleza | $27.500,00 |
+| RS05_19/01/2027 | Trekking en El Chaltén | Aventura | $30.000,00 |
 
-El trekking exige una edad mínima de 16 años, tiene dificultad media y requiere seguro por pasajero.
+El año de las salidas se determina en la primera carga. Cada tour tiene una actividad y tarifa; las salidas duran un día. El trekking exige edad mínima de 16 años y seguro de viaje.
 
-La **reserva 1** corresponde a Salta. Incluye a Ana Díaz y Leo Díaz, con un traslado al hotel de $2.000,00 para Ana. La vendedora es Laura Paz, legajo `V-SALTA`. La salida tiene asignados a la guía Julia Ríos y una combi de 12 lugares, patente `RS001AA`.
+La precarga incluye una reserva para Salta con Ana y Leo, traslado al hotel para Ana, guía y vehículo. Con fecha de trabajo 03/11/2026, su total es $36.000, la seña $10.800 y el saldo $25.200.
 
-Con la fecha indicada se aplica el 15 % de descuento anticipado sobre los dos pasajes. El total es **$36.000,00**, la seña por transferencia es **$10.800,00** y el saldo es **$25.200,00**.
+En los datos locales de la demostración se agregaron además estas dos reservas desde el menú:
 
-### Recorrido sugerido
+| Reserva | Titular | Tour | Estado | Total | Saldo |
+|---|---|---|---|---|---|
+| 2 | Luis Paz | Lagos de Bariloche | PENDIENTE | $38.250,00 | $38.250,00 |
+| 3 | Eva Ríos | Trekking en El Chaltén | CONFIRMADA | $53.000,00 | $37.100,00 |
 
-1. Consultar la reserva 1 con la opción **6** y observar el saldo.
-2. Entrar en **8 → 3** y emitir la lista de `RS01_15/01/2027`.
-3. Consultar los reportes con **9**. Salta debe mostrar dos pasajeros sobre doce lugares.
-4. En **5**, pagar `25200,00` para la reserva 1, con medio `efectivo` y una cuota.
-5. Salir y volver a abrir con fecha `15/01/2027`. En **8**, iniciar la salida (4), cerrarla (5) y liquidar honorarios (6), indicando el mismo código en cada operación. El honorario es **$18.100,00**.
+Ambas tienen dos pasajeros; la de aventura incluye seguros y una seña por transferencia. Son datos guardados localmente, no una ampliación de la precarga: al descargar el repositorio en otra computadora no aparecen automáticamente. Los estados y saldos pueden cambiar al operar o avanzar la fecha de trabajo.
 
-Para cargar una venta propia se puede usar otro cliente precargado y una de las salidas disponibles. Para crear un recorrido nuevo, primero se registra el tour con una tarifa y una actividad, y después se programa su salida.
+### 2. Menú interactivo
 
-### Pruebas unitarias
+Después de cargar o recuperar los datos, se muestra el menú:
 
-La clase `Test.CalculadoraPrecioReservaTest` comprueba precios, promociones, cancelaciones, requisitos de aventura, cupos, vencimientos, tarifas, fechas e importes. `Test.ReservaSalidaTest` agrega rechazos de pagos, control de cupos, reemplazos, recursos, inicio, cierre y honorarios. Se ejecuta el `main` de cada una desde IntelliJ o, después de compilar, con:
+```text
+=== RUMBO SUR - MENÚ PRINCIPAL ===
+
+1. Catálogo de tours y personal
+2. Registrar cliente
+3. Programar salida
+4. Crear reserva
+5. Registrar pago
+6. Consultar reserva por número
+7. Modificar o cancelar reserva
+8. Operar salida
+9. Reportes
+10. Listar reservas
+0. Salir
+```
+
+La opción 1 permite registrar tours, tarifas y actividades y consultar el catálogo. Desde **1 → 5** se accede al registro y consulta de coordinadores y administradores.
+
+La opción 7 reúne adicionales, reemplazos, cancelaciones y ajustes. La opción 8 permite asignar guía y vehículo, emitir la lista, iniciar y cerrar una salida y consultar los honorarios.
+
+Ejemplo de prueba manual para consultar las reservas:
+
+1. Ingresar `05/11/2026` como fecha de trabajo.
+2. Seleccionar la opción **10** para ver todas las reservas, con titular, salida, fecha, estado, total y saldo.
+3. Seleccionar la opción **6** e ingresar el número de una reserva para consultarla individualmente.
+4. Salir con **0** y volver a abrir desde el mismo directorio para comprobar que los datos se recuperan.
+
+El menú no ejecuta las pruebas unitarias automáticamente. Se realizan por separado, como se indica a continuación.
+
+### 3. Pruebas automatizadas
+
+Después de compilar, ejecutar:
 
 ```powershell
 java -cp out Test.CalculadoraPrecioReservaTest
@@ -241,44 +263,62 @@ java -cp out Test.ReservaSalidaTest
 java -cp out Test.PersonalAdministrativoTest
 ```
 
-La ejecución verificada completó **65 comprobaciones unitarias aprobadas y ninguna fallida**: 33 en la primera clase, 22 en la segunda y 10 en `Test.PersonalAdministrativoTest`. También aprobaron las 6 comprobaciones de archivos de `Test.RepositorioPersonalTest`. Cada caso correcto muestra `[OK]`; un resultado incorrecto interrumpe la prueba con una excepción.
+Estas clases completaron **65 comprobaciones aprobadas y 0 fallidas**: 33 de precios y reglas, 22 de reservas y salidas y 10 de personal. Cada comprobación correcta muestra `[OK]`; una diferencia provoca una excepción.
 
-### Demostración desde un archivo
-
-El archivo [demo.txt](docs/demo.txt) contiene las entradas para cargar un cliente, un tour cultural, una salida, una reserva, un adicional y un pago. Para ejecutarlo en una carpeta nueva, desde la raíz del proyecto y después de compilar:
+La prueba de archivos de personal debe ejecutarse en una carpeta nueva para no usar los datos de trabajo. Desde la raíz del proyecto, después de compilar:
 
 ```powershell
-New-Item -ItemType Directory demo-rumbo -ErrorAction Stop
-Push-Location demo-rumbo
-try { Get-Content ../docs/demo.txt | java -cp ../out Presentacion.MenuPrincipal } finally { Pop-Location }
+$clasesPersonal = Join-Path (Get-Location).Path 'out'
+$pruebaPersonal = Join-Path $env:TEMP 'rumbo-personal-prueba-01'
+New-Item -ItemType Directory -Path $pruebaPersonal -ErrorAction Stop | Out-Null
+Push-Location $pruebaPersonal
+try { java -cp $clasesPersonal Test.RepositorioPersonalTest } finally { Pop-Location }
 ```
 
-Si `demo-rumbo` ya existe, elegir otro nombre de carpeta en las dos primeras líneas. La demostración usa la fecha `01/02/2028`. Crea la reserva 2, porque la precarga ocupa el primer número, y termina con total de $1.100,00, cobro con tarjeta de $353,10 y saldo de $770,00.
+Si la carpeta ya existe, elegir otro nombre. Esta prueba completó **6 comprobaciones aprobadas y 0 fallidas** de guardado, recuperación, actualización y duplicados.
+
+El archivo [demo.txt](docs/demo.txt) contiene otro recorrido con entradas para registrar cliente, tour, salida, reserva, adicional y pago. Debe ejecutarse en una carpeta nueva. Sus pasos y los demás escenarios están explicados en el plan de pruebas.
 
 ## Casos de prueba
 
-Estos casos fueron ejecutados con el código actual. Los importes del ejemplo precargado corresponden a la primera apertura con fecha 03/11/2026.
+Los siguientes resultados fueron verificados. Se resumen algunos casos; el detalle se encuentra en el [Plan de pruebas funcionales](docs/Plan_Pruebas_Funcionales.md).
 
-| Caso | Datos de entrada | Resultado esperado | Resultado obtenido |
-|---|---|---|---|
-| Precio por pasajero | Tarifa 1.000 y tipos adulto, menor de 12, menor de 3 y jubilado | 1.000 / 600 / 0 / 900 | Coincidieron los cuatro importes. |
-| Promociones | Seis pasajeros, subtotal 6.000, reserva a 61 y a 60 días | Descuento de 900 y de 600, respectivamente | Coincidieron ambos descuentos. |
-| Cancelación del cliente | 100 abonados, con 30, 29, 15, 14, 7 y 6 días de anticipación | Devolver 90 / 50 / 50 / 20 / 20 / 0 | Coincidieron los seis límites. |
-| Fechas | 29/02/2028 y 31/02/2028 | Aceptar la primera y rechazar la segunda | Ambas validaciones fueron correctas. |
-| Reserva precargada | Consultar reserva 1 y reportes al abrir | Total 36.000, saldo 25.200, ocupación 16,67 % e ingresos 10.800 | Se observaron los cuatro resultados. |
-| Cobro y liquidación | Pagar 25.200, reiniciar el 15/01/2027, iniciar y cerrar Salta | Saldo cero y honorarios 18.100 | Se conservaron los datos y se liquidó el importe esperado. |
-| Venta desde demo.txt | Pasaje 1.000, traslado 100 y seña 330 con tarjeta en tres cuotas | Total 1.100, cobro 353,10 y saldo 770 | Reserva confirmada con esos importes. |
+| Funcionalidad evaluada | Datos de entrada | Resultado esperado | Resultado obtenido | Observación |
+|---|---|---|---|---|
+| Calcular precio por pasajero | Tarifa $1.000; adulto, menor de 12, menor de 3 y jubilado | $1.000, $600, $0 y $900 | Coincidieron los cuatro importes | Prueba unitaria |
+| Aplicar promociones | Seis pasajeros, subtotal $6.000, reserva a 61 y a 60 días | Descuento $900 y $600 | Coincidieron ambos descuentos | No se acumulan |
+| Confirmar reserva | Pagos del 29 % y del 30 % | PENDIENTE y CONFIRMADA | Se obtuvieron ambos estados | Se controla el capital pagado |
+| Calcular devoluciones | $100 abonados; 30, 29, 15, 14, 7 y 6 días de anticipación | $90, $50, $50, $20, $20 y $0 | Coincidieron los seis límites | Cancelación del cliente |
+| Validar aventura | Pasajero sin seguro o con edad insuficiente | Rechazar participación | Se rechazaron ambos casos | Se admite con edad y seguro válidos |
+| Validar fecha | 29/02/2028 y 31/02/2028 | Aceptar la primera y rechazar la segunda | Ambas validaciones correctas | Formato DD/MM/AAAA |
+| Registrar personal | Coordinador y administrador con sus datos | Guardar y recuperar ambos roles | Ambos recuperados tras reiniciar | Se rechazan duplicados |
+| Liquidar honorarios | Salida finalizada, tarifa diaria $500 y adicionales $100 | $505 | Se obtuvo $505 | Incluye 5 % de adicionales |
+| Listar reservas | Opción 10 con reservas guardadas | Mostrar titular, viaje, estado, total y saldo | Se mostraron los datos y las reservas canceladas | Los archivos no cambiaron al repetir la consulta |
+| Listado vacío | Repositorio sin reservas | Informar que no hay reservas | Se mostró el mensaje correspondiente | Verificación aislada de la precarga |
 
-El [plan de pruebas funcionales](docs/Plan_Pruebas_Funcionales.md) detalla las entradas, los resultados y cómo repetir los recorridos en carpetas separadas. Incluye 27 casos aprobados desde consola, ninguno fallido y una verificación manual pendiente en IntelliJ.
+El plan registra **27 casos funcionales aprobados, 0 fallidos y F25 pendiente**. La revisión posterior del listado agregó cuatro verificaciones específicas aprobadas: datos visibles, acceso al personal reorganizado, conservación de archivos y casos de reservas canceladas y listado vacío, agrupados en cuatro comprobaciones.
 
 ## Estado de la entrega
 
-Las [aclaraciones de correspondencia técnica](docs/Correspondencia_Tecnica.md) clasifican las diferencias con la Etapa 1. Las [secuencias actualizadas y editables](docs/uml/README.md) complementan los diagramas originales. El registro y recuperación del coordinador y administrador está implementado. Queda confirmar el alcance de las liquidaciones a proveedores.
+El proyecto incluye:
 
-El código compila para Java 17 y se verificaron las pruebas unitarias y los recorridos de consola descriptos en este README. Las pruebas se ejecutaron con JDK 24. Las indicaciones de IntelliJ corresponden a la estructura y configuración del proyecto; la verificación de ejecución se realizó desde PowerShell.
+- Código Java organizado en paquetes.
+- Herencia, interfaces, colecciones, excepciones y archivos.
+- Aplicación de los principios SOLID y patrones GRASP de la Etapa 1.
+- Menú interactivo y datos iniciales.
+- Pruebas automatizadas y plan de pruebas funcionales con resultados.
+- README con instrucciones de compilación y ejecución.
+- Documentación de diseño y correspondencia con la implementación.
+- Enlace al repositorio de GitHub.
 
-La documentación incluye el diseño de Etapa 1, el informe de revisión y los datos de demostración. Queda realizar la verificación manual en IntelliJ y confirmar entre los integrantes la distribución de tareas y la reflexión del informe. Tampoco se encuentran creados localmente los tags de las etapas.
+La compilación y las pruebas se verificaron por consola. Queda completar **F25 desde IntelliJ**, validar con un parser y renderizar las secuencias Mermaid y aclarar con la cátedra el alcance de las liquidaciones a proveedores. El programa registra proveedores asociados a actividades y calcula honorarios de guías; no liquida pagos a proveedores.
+
+El diseño original está en la [Entrega 1](docs/TPO%20POO%20(1).pdf). Las diferencias y aclaraciones se encuentran en [Correspondencia técnica](docs/Correspondencia_Tecnica.md) y las versiones editables de las secuencias en [docs/uml](docs/uml/README.md). El informe final del TPO será redactado por el grupo por separado.
 
 ## Conclusión
 
-El desarrollo permitió aplicar los contenidos de Programación Orientada a Objetos a una agencia de turismo. La separación de responsabilidades ayudó a organizar las reglas de reservas, pagos y salidas. Las pruebas permitieron comprobar tanto los cálculos como la conservación de los datos al volver a abrir el programa. El proyecto reúne el diseño de la primera etapa con una aplicación que permite recorrer las operaciones principales de Rumbo Sur.
+El trabajo permite aplicar los conceptos de Programación Orientada a Objetos dentro de un sistema de turismo.
+
+Rumbo Sur relaciona tours, salidas, clientes, pasajeros y pagos, separando las operaciones del menú, las reglas de negocio y el guardado de datos.
+
+El sistema se ejecuta desde MenuPrincipal.java, donde se cargan o recuperan los datos y se accede a las funcionalidades por consola. Las pruebas permiten comprobar los cálculos y las operaciones principales de la agencia.
