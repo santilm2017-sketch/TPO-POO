@@ -93,7 +93,7 @@ El sistema permite:
 - Calcular precios según el pasajero, la temporada y las promociones.
 - Contratar adicionales por pasajero, incluido el seguro obligatorio de aventura.
 - Registrar señas y pagos con efectivo, transferencia o tarjeta.
-- Consultar una reserva por número o listar todas las reservas.
+- Listar todas las reservas con su estado, total, saldo y notas de ajuste.
 - Reemplazar pasajeros, cancelar reservas y registrar notas de ajuste.
 - Asignar guía y transporte, emitir la lista de pasajeros e iniciar y cerrar salidas.
 - Calcular honorarios de guías y consultar reportes.
@@ -185,6 +185,10 @@ java -cp out Presentacion.MenuPrincipal
 
 ## Cómo probar el sistema
 
+Durante una carga, **0 cancela y vuelve al menú principal**. En el menú principal, 0 sale del programa. Para ingresar un importe cero, escribir **0,00**; los ajustes negativos siguen permitidos.
+
+Si una fecha, número u opción de texto es inválida, se vuelve a pedir ese campo. Un error que depende de varios datos permite elegir **1 para repetir la misma operación** o **0 para cancelarla**. Al repetir una operación se vuelven a ingresar sus datos. Los errores de archivos interrumpen la sesión para evitar continuar después de un fallo de guardado. No se impone un máximo arbitrario de días: una duración positiva admitida por el dominio sigue siendo válida.
+
 ### 1. Datos iniciales
 
 Al ejecutar MenuPrincipal, se ingresa la fecha de trabajo en formato **DD/MM/AAAA**, por ejemplo `05/11/2026`. Los importes se ingresan sin separador de miles y con coma decimal, por ejemplo `15900,00`.
@@ -232,23 +236,22 @@ Después de cargar o recuperar los datos, se muestra el menú:
 3. Programar salida
 4. Crear reserva
 5. Registrar pago
-6. Consultar reserva por número
+6. Listar reservas
 7. Modificar o cancelar reserva
 8. Operar salida
 9. Reportes
-10. Listar reservas
 0. Salir
 ```
 
-La opción 1 permite registrar tours, tarifas y actividades y consultar el catálogo. Desde **1 → 5** se accede al registro y consulta de coordinadores y administradores.
+La opción 1 muestra el catálogo automáticamente y permite registrar tours, tarifas y actividades. Desde **1 → 4** se muestran los coordinadores y administradores guardados. Allí se puede elegir **1** para registrar otro o **0** para volver.
 
-La opción 7 reúne adicionales, reemplazos, cancelaciones y ajustes. La opción 8 permite asignar guía y vehículo, emitir la lista, iniciar y cerrar una salida y consultar los honorarios.
+El menú tiene nueve opciones principales y 0 para salir. La opción 7 reúne adicionales, reemplazos, cancelaciones y ajustes. La opción 8 tiene tres recorridos: **1. Asignar guía y vehículo**, **2. Emitir lista e iniciar salida** y **3. Cerrar salida y consultar honorarios**. En el segundo, responder **n** permite ver la lista sin iniciar. El tercero muestra los honorarios al cerrar y permite volver a consultarlos para una salida ya finalizada.
 
 Ejemplo de prueba manual para consultar las reservas:
 
 1. Ingresar `05/11/2026` como fecha de trabajo.
-2. Seleccionar la opción **10** para ver todas las reservas, con titular, salida, fecha, estado, total y saldo.
-3. Seleccionar la opción **6** e ingresar el número de una reserva para consultarla individualmente.
+2. Seleccionar la opción **6** para ver todas las reservas, con titular, salida, fecha, estado, total y saldo.
+3. Revisar el estado, saldo y las notas de ajuste en ese mismo listado.
 4. Salir con **0** y volver a abrir desde el mismo directorio para comprobar que los datos se recuperan.
 
 El menú no ejecuta las pruebas unitarias automáticamente. Se realizan por separado, como se indica a continuación.
@@ -293,10 +296,10 @@ Los siguientes resultados fueron verificados. Se resumen algunos casos; el detal
 | Validar fecha | 29/02/2028 y 31/02/2028 | Aceptar la primera y rechazar la segunda | Ambas validaciones correctas | Formato DD/MM/AAAA |
 | Registrar personal | Coordinador y administrador con sus datos | Guardar y recuperar ambos roles | Ambos recuperados tras reiniciar | Se rechazan duplicados |
 | Liquidar honorarios | Salida finalizada, tarifa diaria $500 y adicionales $100 | $505 | Se obtuvo $505 | Incluye 5 % de adicionales |
-| Listar reservas | Opción 10 con reservas guardadas | Mostrar titular, viaje, estado, total y saldo | Se mostraron los datos y las reservas canceladas | Los archivos no cambiaron al repetir la consulta |
+| Listar reservas | Opción 6 con reservas guardadas | Mostrar titular, viaje, estado, total y saldo | Se mostraron los datos y las reservas canceladas | Los archivos no cambiaron al repetir la consulta |
 | Listado vacío | Repositorio sin reservas | Informar que no hay reservas | Se mostró el mensaje correspondiente | Verificación aislada de la precarga |
 
-El plan registra **27 casos funcionales aprobados, 0 fallidos y F25 pendiente**. La revisión posterior del listado agregó cuatro verificaciones específicas aprobadas: datos visibles, acceso al personal reorganizado, conservación de archivos y casos de reservas canceladas y listado vacío, agrupados en cuatro comprobaciones.
+La última ejecución sobre el menú simplificado completó **47 casos funcionales aprobados, 0 fallidos y F25 pendiente**: 24 recorridos principales, tres de personal, uno de compatibilidad, 13 de validación de entradas y seis de operaciones agrupadas. La revisión posterior del listado agregó cuatro verificaciones específicas aprobadas: datos visibles, acceso al personal reorganizado, conservación de archivos y casos de reservas canceladas y listado vacío, agrupados en cuatro comprobaciones.
 
 ## Estado de la entrega
 

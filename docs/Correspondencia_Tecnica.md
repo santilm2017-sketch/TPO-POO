@@ -1,5 +1,13 @@
 # Correspondencia técnica de la implementación
 
+**Operaciones agrupadas:** el catálogo se muestra al entrar, sin una opción de consulta separada; sus cuatro opciones son tour, tarifa, actividad y personal. Operar salida pasa de seis opciones a tres: asignar guía y vehículo, emitir lista e iniciar (con confirmación s/n), cerrar y mostrar honorarios. Para salidas ya finalizadas, la tercera permite consultar nuevamente el importe. ControladorOperaciones.asignarRecursos reemplaza las dos asignaciones del controlador, valida ambos recursos antes de guardar y conserva las validaciones del dominio. Cancelar durante la entrada o rechazar transporte no deja el guía parcialmente cambiado. Persistencia y objetos serializados no se modifican. Las cuatro modificaciones de reservas siguen separadas porque representan requisitos distintos. Las referencias anteriores al menú deben interpretarse con estas equivalencias.
+
+**Validación de entradas:** MenuPrincipal incorpora ciclos sencillos para repetir fechas, enteros, importes, opciones y valores de texto permitidos. Las operaciones comparten un punto de ejecución con reintento o cancelación. La excepción propia de presentación CargaCancelada permite abandonar una carga con 0 desde cualquier profundidad. Los errores de archivos no se reintentan. No se modificaron reglas ni clases serializadas del dominio. Para importe cero se usa 0,00, ya que 0 cancela. Las notas previas sobre reducción de líneas corresponden a la simplificación anterior; este cambio agrega el manejo interactivo solicitado. Aprobaron 65 comprobaciones unitarias, 6 de archivos y 41 escenarios de consola.
+
+**Simplificación del menú:** se trabaja sobre main actualizado. Se unificaron las consultas en 6, Listar reservas, mostrando también notas de ajuste. El personal se consulta automáticamente al entrar en 1 → 4. Se eliminó el constructor auxiliar de Administración que no tenía llamadas. Persistencia y clases serializadas se conservan para mantener la lectura de los datos existentes; algunos métodos sin llamadas se mantienen por compatibilidad y por representar datos del enunciado. Esta nota reemplaza las referencias anteriores al menú con opción 10.
+
+Se verificaron 65 comprobaciones unitarias, 6 de archivos y 28 escenarios de consola, todos aprobados. Frente a la última versión de revision-tpo, los dos archivos Java modificados pasan de 486 a 473 líneas: reducción neta de 13. El main publicado tenía un menú anterior sin listado: por eso su comparación con el código resultante muestra un aumento, al recuperar esa funcionalidad. No se borraron clases ni se modificaron los objetos serializados para aumentar artificialmente la reducción. La actualización local de main fue un avance al commit ya existente del PR #2, sin crear un commit ni subir cambios.
+
 ## Actualización: registro de personal incorporado
 
 Esta actualización reemplaza los pendientes de personal que se conservan debajo como antecedente de la auditoría. Se revisaron los cinco archivos de Correccion_Personal_Rumbo_Sur.zip y se incorporaron PersonalAdministrativo, RepositorioPersonal, PersonalAdministrativoTest y las modificaciones de ControladorAdministrativo y MenuPrincipal. Se corrigió además la validación de documento duplicado al actualizar y se agregó RepositorioPersonalTest.
@@ -53,7 +61,7 @@ El menú convierte las entradas con `Fecha.desdePantalla` y presenta fechas medi
 1. Abrir el proyecto en IntelliJ y seleccionar el JDK instalado en Project Structure; marcar `src` como Sources Root si fuera necesario.
 2. Crear una carpeta nueva y vacía fuera de los datos del proyecto, por ejemplo en el directorio temporal de Windows. Configurar esa carpeta como Working directory de `Presentacion.MenuPrincipal`.
 3. Ejecutar su `main` e ingresar `03/11/2026`.
-4. Elegir 6 e ingresar reserva 1. Debe indicar CONFIRMADA, total $36.000,00 y saldo $25.200,00.
+4. Elegir 6 y localizar reserva 1 en el listado. Debe indicar CONFIRMADA, total $36.000,00 y saldo $25.200,00.
 5. Salir con 0 y volver a ejecutar sobre la misma carpeta y con la misma fecha. Consultar otra vez la reserva y comprobar los mismos valores.
 6. Ejecutar los `main` de las dos clases de Test. Deben completar 33 y 22 mensajes `[OK]` sin excepción.
 7. Registrar fecha, JDK utilizado y resultados reales en F25 del plan. Marcar APROBADO solo después de completar el recorrido; si difiere, registrar FALLIDO y el error observado.
