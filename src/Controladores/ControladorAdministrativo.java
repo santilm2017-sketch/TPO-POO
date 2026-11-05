@@ -13,14 +13,9 @@ public class ControladorAdministrativo {
     private Repositorio<PersonalAdministrativo> personalRepo;
 
     public ControladorAdministrativo(Repositorio<Tour> tourRepo, Repositorio<Salida> salidaRepo) {
-        this(tourRepo, salidaRepo, new RepositorioPersonal());
-    }
-
-    public ControladorAdministrativo(Repositorio<Tour> tourRepo, Repositorio<Salida> salidaRepo,
-                                    Repositorio<PersonalAdministrativo> personalRepo) {
         this.tourRepo = tourRepo;
         this.salidaRepo = salidaRepo;
-        this.personalRepo = personalRepo;
+        this.personalRepo = new RepositorioPersonal();
     }
 
     public void registrarPersonal(PersonalAdministrativo persona) {

@@ -30,30 +30,24 @@ public class ControladorOperaciones {
         salidaRepo.guardar(salida);
     }
 
-    public void asignarGuia(String idSalida, Guia guia) {
+    public void asignarRecursos(String idSalida, Guia guia, Vehiculo vehiculo) {
         Salida salida = exigirSalida(idSalida);
-        if (guia == null) {
-            throw new IllegalArgumentException("El Guía ingresado no puede ser nulo.");
+        if (guia == null || vehiculo == null) throw new IllegalArgumentException("Guía y vehículo obligatorios.");
+        // Validar el transporte antes de cambiar el guía evita una asignación parcial.
+        if (!salida.abierta() || !vehiculo.verificarCapacidad(salida.getCupoMaximo())) {
+            throw new RuntimeException("Salida cerrada o capacidad insuficiente.");
         }
-
         for (Salida otra : salidaRepo.obtenerTodos()) {
-            if (otra != salida && otra.getGuia() != null && otra.getGuia().getDocumento().equals(guia.getDocumento())
-                    && seSuperponen(salida, otra)) throw new RuntimeException("Guía ocupado.");
+            if (otra != salida && seSuperponen(salida, otra)) {
+                if (otra.getGuia() != null && otra.getGuia().getDocumento().equals(guia.getDocumento())) {
+                    throw new RuntimeException("Guía ocupado.");
+                }
+                if (otra.getVehiculo() != null && otra.getVehiculo().getPatente().toLowerCase().equals(vehiculo.getPatente().toLowerCase())) {
+                    throw new RuntimeException("Vehículo ocupado.");
+                }
+            }
         }
         salida.asignarGuia(guia);
-        salidaRepo.actualizar(salida);
-    }
-
-    public void asignarVehiculo(String idSalida, Vehiculo vehiculo) {
-        Salida salida = exigirSalida(idSalida);
-        if (vehiculo == null) {
-            throw new IllegalArgumentException("El Vehículo ingresado no puede ser nulo.");
-        }
-
-        for (Salida otra : salidaRepo.obtenerTodos()) {
-            if (otra != salida && otra.getVehiculo() != null && otra.getVehiculo().getPatente().toLowerCase().equals(vehiculo.getPatente().toLowerCase())
-                    && seSuperponen(salida, otra)) throw new RuntimeException("Vehículo ocupado.");
-        }
         salida.asignarVehiculo(vehiculo);
         salidaRepo.actualizar(salida);
     }
