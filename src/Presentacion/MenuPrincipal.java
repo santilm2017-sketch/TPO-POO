@@ -407,6 +407,26 @@ public class MenuPrincipal {
         }
     }
 
+    private static void listarReservas() {
+        java.util.List<Reserva> lista = reservas.obtenerTodos();
+        if (lista.isEmpty()) {
+            System.out.println("No hay reservas registradas.");
+            return;
+        }
+        System.out.println("=== RESERVAS REGISTRADAS ===");
+        System.out.println("Las reservas PENDIENTES y CONFIRMADAS están activas.");
+        for (Reserva reserva : lista) {
+            System.out.println("Reserva " + reserva.getNumero()
+                    + " | Titular: " + reserva.getCliente().getNombre()
+                    + " | Tour: " + reserva.getSalida().getTour().getNombre()
+                    + " | Salida: " + reserva.getSalida().getId()
+                    + " | Fecha: " + Fecha.mostrar(reserva.getSalida().getFechaInicio())
+                    + " | Estado: " + reserva.getEstado()
+                    + " | Total: $ " + Importes.mostrar(reserva.getTotal())
+                    + " | Saldo: $ " + Importes.mostrar(reserva.saldoPendiente()));
+        }
+    }
+
     private static void catalogo() {
         for (Tour t : controladorAdmin.obtenerTodosTours()) {
             System.out.println(t.getCodigo() + " " + t.getNombre() + " | " + t.getDuracionDias() + " días");
