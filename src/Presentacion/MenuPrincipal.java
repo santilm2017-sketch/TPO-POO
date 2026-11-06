@@ -45,7 +45,6 @@ public class MenuPrincipal {
                 System.out.println("8. Operar salida");
                 System.out.println("9. Reportes");
                 System.out.println("0. Salir");
-                if (!scanner.hasNextLine()) return;
                 try {
                     int opcion = opcion("Seleccione una opción", 9);
                     if (opcion == 0) return;
@@ -185,13 +184,20 @@ public class MenuPrincipal {
 
     private static void menuCatalogo() {
         catalogo();
-        System.out.println("1. Registrar tour   2. Cargar tarifa   3. Agregar actividad   4. Personal administrativo   0. Volver");
+        System.out.println("1. Registrar tour");
+        System.out.println("2. Cargar Tarifa");
+        System.out.println("3. Agregar Actividad");
+        System.out.println("4. Personal administrativo");
+        System.out.println("0. Volver");
         int opcion = opcion("Opción", 4);
         if (opcion != 0) ejecutarOperacion(10 + opcion);
     }
 
     private static void modificarReserva() {
-        System.out.println("1. Contratar adicional   2. Reemplazar pasajero   3. Cancelar   4. Nota de ajuste   0. Volver");
+        System.out.println("1. Contratar adicional");
+        System.out.println("2. Reemplazar pasajero");
+        System.out.println("3. Cancelar");
+        System.out.println("0. Volver");
         int opcion = opcion("Opción", 4);
         if (opcion != 0) ejecutarOperacion(70 + opcion);
     }
@@ -199,7 +205,8 @@ public class MenuPrincipal {
     private static void menuSalidas() {
         System.out.println("1. Asignar guía y vehículo");
         System.out.println("2. Emitir lista e iniciar salida");
-        System.out.println("3. Cerrar salida y consultar honorarios   0. Volver");
+        System.out.println("3. Cerrar salida y consultar honorarios");
+        System.out.println("0. Volver");
         int opcion = opcion("Opción", 3);
         if (opcion != 0) ejecutarOperacion(80 + opcion);
     }
