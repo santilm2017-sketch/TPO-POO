@@ -10,16 +10,22 @@ public class Cliente implements Serializable {
     private String telefono;
 
     public Cliente(String documento, String nombre, String email, String telefono) {
-        if (documento == null || documento.isBlank()) throw new IllegalArgumentException("Documento obligatorio.");
-        this.documento = documento.trim();
-        this.nombre = nombre;
-        this.email = email;
-        this.telefono = telefono;
+        this.documento = obligatorio(documento, "Documento");
+        this.nombre = obligatorio(nombre, "Nombre");
+        this.email = obligatorio(email, "Email");
+        this.telefono = obligatorio(telefono, "Teléfono");
     }
 
     public Cliente(String documento, String nombre, String email, String telefono, String paisResidencia) {
         this(documento, nombre, email, telefono);
-        this.paisResidencia = paisResidencia;
+        this.paisResidencia = obligatorio(paisResidencia, "País de residencia");
+    }
+
+    private static String obligatorio(String valor, String dato) {
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException(dato + " obligatorio.");
+        }
+        return valor.trim();
     }
 
     public String getPaisResidencia() { return paisResidencia; }
@@ -41,19 +47,18 @@ public class Cliente implements Serializable {
     }
 
     public void setDocumento(String documento) {
-        if (documento == null || documento.isBlank()) throw new IllegalArgumentException("Documento obligatorio.");
-        this.documento = documento.trim();
+        this.documento = obligatorio(documento, "Documento");
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = obligatorio(nombre, "Nombre");
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = obligatorio(email, "Email");
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = telefono;
+        this.telefono = obligatorio(telefono, "Teléfono");
     }
 }

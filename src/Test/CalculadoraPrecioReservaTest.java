@@ -62,8 +62,8 @@ public class CalculadoraPrecioReservaTest {
     }
 
     private static Reserva reserva(Salida s, String fecha) {
-        Cliente c = new Cliente("1", "Ana", "", "");
-        Vendedor v = new Vendedor("2", "Luis", "", "", "V1");
+        Cliente c = new Cliente("1", "Ana", "ana@example.com", "111");
+        Vendedor v = new Vendedor("2", "Luis", "", "111", "V1");
         return new Reserva(fecha, c, v, s);
     }
 

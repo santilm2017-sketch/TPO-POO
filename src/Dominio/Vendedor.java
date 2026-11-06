@@ -14,7 +14,7 @@ public class Vendedor extends Personal {
 
     public Vendedor(String documento, String nombre, String email, String telefono, String legajo) {
         super(documento, nombre, email, telefono);
-        this.legajo = legajo;
+        setLegajo(legajo);
     }
 
     public String getLegajo() {
@@ -22,6 +22,7 @@ public class Vendedor extends Personal {
     }
 
     public void setLegajo(String legajo) {
-        this.legajo = legajo;
+        if (legajo == null || legajo.isBlank()) throw new IllegalArgumentException("Legajo obligatorio.");
+        this.legajo = legajo.trim();
     }
 }

@@ -197,6 +197,7 @@ public class MenuPrincipal {
         System.out.println("1. Contratar adicional");
         System.out.println("2. Reemplazar pasajero");
         System.out.println("3. Cancelar");
+        System.out.println("4. Registrar ajuste de precio");
         System.out.println("0. Volver");
         int opcion = opcion("Opción", 4);
         if (opcion != 0) ejecutarOperacion(70 + opcion);

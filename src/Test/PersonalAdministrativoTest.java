@@ -1,6 +1,9 @@
 package Test;
 
 import Dominio.PersonalAdministrativo;
+import Dominio.Cliente;
+import Dominio.Guia;
+import Dominio.Vendedor;
 
 public class PersonalAdministrativoTest {
     public static void main(String[] args) {
@@ -36,7 +39,43 @@ public class PersonalAdministrativoTest {
             verificar(rechazado, "Dato obligatorio rechazado: " + i);
         }
 
+        probarDatosObligatorios();
         System.out.println("=== PRUEBAS DE PERSONAL COMPLETADAS ===");
+    }
+
+    private static void probarDatosObligatorios() {
+        Cliente cliente = new Cliente("123", "Ana", "ana@example.com", "111", "Argentina");
+        Vendedor vendedor = new Vendedor("456", "Luis", "", "222", "V1");
+        for (String vacio : new String[]{null, "", "   "}) {
+            Runnable[] operaciones = {
+                    () -> new Cliente(vacio, "Ana", "ana@example.com", "111"),
+                    () -> new Cliente("123", vacio, "ana@example.com", "111"),
+                    () -> new Cliente("123", "Ana", vacio, "111"),
+                    () -> new Cliente("123", "Ana", "ana@example.com", vacio),
+                    () -> new Cliente("123", "Ana", "ana@example.com", "111", vacio),
+                    () -> new Guia(vacio, "Julia", "", "111", "M1", 500),
+                    () -> new Guia("G1", vacio, "", "111", "M1", 500),
+                    () -> new Guia("G1", "Julia", "", vacio, "M1", 500),
+                    () -> new Guia("G1", "Julia", "", "111", vacio, 500),
+                    () -> new Vendedor("456", "Luis", "", "222", vacio),
+                    () -> cliente.setDocumento(vacio),
+                    () -> cliente.setNombre(vacio),
+                    () -> cliente.setEmail(vacio),
+                    () -> cliente.setTelefono(vacio),
+                    () -> vendedor.setLegajo(vacio)
+            };
+            for (int i = 0; i < operaciones.length; i++) {
+                boolean rechazado = false;
+                try { operaciones[i].run(); }
+                catch (IllegalArgumentException e) { rechazado = true; }
+                verificar(rechazado, "Campo obligatorio nulo o vacío rechazado: " + i);
+            }
+        }
+        verificar(cliente.getDocumento().equals("123") && cliente.getNombre().equals("Ana")
+                && cliente.getEmail().equals("ana@example.com") && cliente.getTelefono().equals("111")
+                && vendedor.getLegajo().equals("V1"), "Cambios inválidos conservan los datos anteriores");
+        verificar(new Guia("G1", "Julia", "", "111", "M1", 500).getEmail().equals("")
+                && vendedor.getEmail().equals(""), "Email del personal sigue siendo opcional");
     }
 
     private static void verificar(boolean correcto, String caso) {

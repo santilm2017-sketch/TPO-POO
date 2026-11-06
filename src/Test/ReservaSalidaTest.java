@@ -23,8 +23,8 @@ public class ReservaSalidaTest {
     }
 
     private static Reserva reserva(Salida salida, Pasajero pasajero) {
-        Reserva reserva = new Reserva("2028-02-01", new Cliente("C1", "Ana", "", ""),
-                new Vendedor("V1", "Luis", "", "", "V1"), salida);
+        Reserva reserva = new Reserva("2028-02-01", new Cliente("C1", "Ana", "ana@example.com", "111"),
+                new Vendedor("V1", "Luis", "", "111", "V1"), salida);
         reserva.agregarPasajero(pasajero);
         new CalculadoraPrecioReserva().calcularTotalReserva(reserva, "baja");
         return reserva;
@@ -85,7 +85,7 @@ public class ReservaSalidaTest {
         reserva.confirmarAlta();
         reserva.contratar("P1", new ServicioAdicional("Traslado", 100, false), new Fecha("2028-02-01"));
         reserva.registrarPago("2028-02-01", 200, new Transferencia(), 1);
-        Guia guia = new Guia("G1", "Julia", "", "", "M1", 500);
+        Guia guia = new Guia("G1", "Julia", "", "111", "M1", 500);
         boolean rechazado = false;
         try { salida.asignarGuia(guia); }
         catch (RuntimeException e) { rechazado = true; }

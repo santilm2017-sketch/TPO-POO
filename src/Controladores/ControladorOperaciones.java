@@ -39,7 +39,7 @@ public class ControladorOperaciones {
         }
         for (Salida otra : salidaRepo.obtenerTodos()) {
             if (otra != salida && seSuperponen(salida, otra)) {
-                if (otra.getGuia() != null && otra.getGuia().getDocumento().equals(guia.getDocumento())) {
+                if (otra.getGuia() != null && otra.getGuia().getDocumento().equalsIgnoreCase(guia.getDocumento())) {
                     throw new RuntimeException("Guía ocupado.");
                 }
                 if (otra.getVehiculo() != null && otra.getVehiculo().getPatente().toLowerCase().equals(vehiculo.getPatente().toLowerCase())) {

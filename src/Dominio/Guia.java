@@ -11,7 +11,8 @@ public class Guia extends Personal {
 
     public Guia(String documento, String nombre, String email, String telefono, String matricula, double tarifaDiaria) {
         super(documento, nombre, email, telefono);
-        this.matricula = matricula;
+        if (matricula == null || matricula.isBlank()) throw new IllegalArgumentException("Matrícula/legajo obligatorio.");
+        this.matricula = matricula.trim();
         if (!Importes.esValido(tarifaDiaria)) throw new IllegalArgumentException("Honorario inválido.");
         this.tarifaDiaria = tarifaDiaria;
     }
