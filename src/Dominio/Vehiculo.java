@@ -11,7 +11,7 @@ public class Vehiculo implements java.io.Serializable {
         }
         this.patente = patente;
         this.capacidad = capacidad;
-        this.tipo = tipo;
+        this.tipo = Validaciones.obligatorio(tipo, "Tipo de vehículo");
     }
 
     public boolean verificarCapacidad(int cupoRequerido) {

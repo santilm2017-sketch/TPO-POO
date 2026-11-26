@@ -23,7 +23,7 @@ public class ReservaSalidaTest {
     }
 
     private static Reserva reserva(Salida salida, Pasajero pasajero) {
-        Reserva reserva = new Reserva("2028-02-01", new Cliente("C1", "Ana", "ana@example.com", "111"),
+        Reserva reserva = new Reserva("2028-02-01", new Cliente("10", "Ana", "ana@example.com", "111"),
                 new Vendedor("V1", "Luis", "", "111", "V1"), salida);
         reserva.agregarPasajero(pasajero);
         new CalculadoraPrecioReserva().calcularTotalReserva(reserva, "baja");
@@ -31,7 +31,7 @@ public class ReservaSalidaTest {
     }
 
     private static void probarPagos() {
-        Reserva reserva = reserva(salida(2), adulto("P1"));
+        Reserva reserva = reserva(salida(2), adulto("101"));
         reserva.confirmarAlta();
         boolean rechazado = false;
         try { reserva.registrarPago("2028-02-01", 101, new Efectivo(), 1); }
@@ -66,11 +66,11 @@ public class ReservaSalidaTest {
 
     private static void probarCupos() {
         Salida salida = salida(1);
-        Reserva bebe = reserva(salida, new Pasajero("B1", "Bebe", "2027-01-01", "menor_3", "111", ""));
+        Reserva bebe = reserva(salida, new Pasajero("201", "Bebe", "2027-01-01", "menor_3", "111", ""));
         bebe.confirmarAlta();
         verificar(bebe.getTotal() == 0 && salida.getCuposReservados() == 1,
                 "El bebe ocupa lugar aunque no pague pasaje");
-        Reserva otra = reserva(salida, adulto("P2"));
+        Reserva otra = reserva(salida, adulto("102"));
         boolean rechazado = false;
         try { otra.confirmarAlta(); }
         catch (CupoSuperadoException e) { rechazado = true; }
@@ -81,9 +81,9 @@ public class ReservaSalidaTest {
 
     private static void probarOperacion() throws RequisitoPasajeroException {
         Salida salida = salida(2);
-        Reserva reserva = reserva(salida, adulto("P1"));
+        Reserva reserva = reserva(salida, adulto("101"));
         reserva.confirmarAlta();
-        reserva.contratar("P1", new ServicioAdicional("Traslado", 100, false), new Fecha("2028-02-01"));
+        reserva.contratar("101", new ServicioAdicional("Traslado", 100, false), new Fecha("2028-02-01"));
         reserva.registrarPago("2028-02-01", 200, new Transferencia(), 1);
         Guia guia = new Guia("G1", "Julia", "", "111", "M1", 500);
         boolean rechazado = false;
@@ -106,19 +106,19 @@ public class ReservaSalidaTest {
         catch (RuntimeException e) { rechazado = true; }
         verificar(rechazado, "No se liquida antes del cierre");
         salida.emitirListaPasajeros();
-        reserva.reemplazar("P1", adulto("P2"), new Fecha("2028-02-27"));
-        verificar(reserva.getTotal() == 200 && reserva.buscarPasajero("P2").getContrataciones().size() == 1
+        reserva.reemplazar("101", adulto("102"), new Fecha("2028-02-27"));
+        verificar(reserva.getTotal() == 200 && reserva.buscarPasajero("102").getContrataciones().size() == 1
                 && salida.getCuposReservados() == 1, "Reemplazo a tres dias conserva precio, adicional y cupo");
         rechazado = false;
-        try { reserva.reemplazar("P2", adulto("P3"), new Fecha("2028-02-28")); }
+        try { reserva.reemplazar("102", adulto("103"), new Fecha("2028-02-28")); }
         catch (RuntimeException e) { rechazado = true; }
-        verificar(rechazado && reserva.buscarPasajero("P2") != null, "Reemplazo a dos dias rechazado");
+        verificar(rechazado && reserva.buscarPasajero("102") != null, "Reemplazo a dos dias rechazado");
         rechazado = false;
         try { salida.iniciar(); }
         catch (RuntimeException e) { rechazado = true; }
         verificar(rechazado && salida.abierta(), "Reemplazo obliga a emitir nuevamente la lista");
         String lista = salida.emitirListaPasajeros();
-        verificar(lista.contains("P2") && !lista.contains("P1"), "Lista con el pasajero nuevo");
+        verificar(lista.contains("102") && !lista.contains("101"), "Lista con el pasajero nuevo");
         salida.iniciar();
         verificar(salida.getEstado().equals("EN_CURSO"), "Inicio con requisitos completos");
         salida.cerrar();

@@ -1,4 +1,4 @@
-# Secuencias actualizadas
+ Secuencias actualizadas
 
 Estas secuencias describen el código actual. Complementan los originales de las páginas físicas 13 y 14 de la Entrega 1, que permanecen intactos en el PDF.
 

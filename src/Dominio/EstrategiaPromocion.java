@@ -10,4 +10,6 @@ public interface EstrategiaPromocion {
      * Calcula el monto total en dinero ($) a descontar sobre el subtotal de pasajes.
      */
     double calcularDescuento(Reserva reserva, double subtotalPasajes);
+
+    double calcularDescuento(Reserva reserva, double subtotalPasajes, int cantidadPasajeros);
 }

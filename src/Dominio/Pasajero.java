@@ -14,16 +14,16 @@ public class Pasajero implements Serializable {
     private List<ContratacionServicio> contrataciones;
 
     public Pasajero(String documento, String nombre, String fechaNacimiento, String tipo, String contactoEmergencia, String restricciones) {
-        if (documento == null || documento.isBlank() || nombre == null || nombre.isBlank()
+        if (documento == null || documento.isBlank()
                 || tipo == null || tipo.isBlank() || contactoEmergencia == null || contactoEmergencia.isBlank()) {
             throw new IllegalArgumentException("Documento, nombre y contacto de emergencia obligatorios.");
         }
         new Fecha(fechaNacimiento);
-        this.documento = documento.trim();
-        this.nombre = nombre;
+        this.documento = Validaciones.documento(documento);
+        this.nombre = Validaciones.nombrePersona(nombre);
         this.fechaNacimiento = fechaNacimiento;
         this.tipo = tipo;
-        this.contactoEmergencia = contactoEmergencia;
+        this.contactoEmergencia = Validaciones.telefono(contactoEmergencia);
         this.restricciones = restricciones;
         this.contrataciones = new ArrayList<>();
     }

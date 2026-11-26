@@ -49,11 +49,18 @@ public class Reserva implements Serializable {
     }
 
     public void agregarPasajero(Pasajero pasajero) {
-        if (registrada || pasajero == null) throw new RuntimeException("No se puede agregar el pasajero.");
+        if (pasajero == null) throw new IllegalArgumentException("Pasajero obligatorio.");
+        if (registrada) {
+            exigirAbierta();
+            if (!salida.verificarCupoDisponible(1)) throw new IllegalArgumentException("No hay cupo.");
+            try { validarPasajero(pasajero); }
+            catch (RequisitoPasajeroException e) { throw new IllegalArgumentException(e.getMessage()); }
+        }
         for (Pasajero p : pasajeros) {
             if (p.getDocumento().toLowerCase().equals(pasajero.getDocumento().toLowerCase())) throw new IllegalArgumentException("Pasajero duplicado.");
         }
         pasajeros.add(pasajero);
+        if (registrada) salida.actualizarOcupacion();
     }
 
     public boolean vigente() {
@@ -212,6 +219,7 @@ public class Reserva implements Serializable {
 
     void setTotal(double total) {
         this.total = total;
+        if (registrada) verificarEstadoPago();
     }
 
     public Cliente getCliente() {

@@ -19,4 +19,7 @@ public class PromocionGrupo implements EstrategiaPromocion {
         }
         return subtotalPasajes * PORCENTAJE_DESCUENTO;
     }
+    public double calcularDescuento(Reserva reserva, double subtotalPasajes, int cantidadPasajeros) {
+        return cantidadPasajeros >= CANTIDAD_MINIMA_PASAJEROS ? subtotalPasajes * PORCENTAJE_DESCUENTO : 0;
+    }
 }

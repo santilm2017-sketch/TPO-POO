@@ -10,10 +10,10 @@ public class Proveedor implements java.io.Serializable {
         if (nombre == null || cuit == null) {
             throw new IllegalArgumentException("El nombre y el CUIT son obligatorios.");
         }
-        this.nombre = nombre;
-        this.cuit = cuit;
-        this.contacto = contacto;
-        this.servicioQuePresta = servicioQuePresta;
+        this.nombre = Validaciones.obligatorio(nombre, "Nombre del proveedor");
+        this.cuit = Validaciones.obligatorio(cuit, "CUIT");
+        this.contacto = Validaciones.obligatorio(contacto, "Contacto");
+        this.servicioQuePresta = Validaciones.obligatorio(servicioQuePresta, "Servicio del proveedor");
     }
 
     public String getNombre() {

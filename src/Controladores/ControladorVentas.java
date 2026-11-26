@@ -11,6 +11,7 @@ public class ControladorVentas {
     private Repositorio<Reserva> reservaRepo;
     private Repositorio<Salida> salidaRepo;
     private CalculadoraPrecioReserva calculadoraPrecio;
+    private RepositorioCondiciones condiciones = new RepositorioCondiciones();
 
     public ControladorVentas(Repositorio<Cliente> clientes, Repositorio<Salida> salidas) {
         this.clienteRepo = clientes;
@@ -27,6 +28,29 @@ public class ControladorVentas {
             throw new RuntimeException("Ya existe un cliente registrado con el documento: " + cliente.getDocumento());
         }
         clienteRepo.guardar(cliente);
+    }
+
+    public java.util.List<Cliente> obtenerClientes() { return clienteRepo.obtenerTodos(); }
+    public java.util.List<Reserva> obtenerReservas() { return reservaRepo.obtenerTodos(); }
+    public java.util.List<Salida> obtenerSalidas() { return salidaRepo.obtenerTodos(); }
+
+    public void comprobarAmpliacion(int numero, Fecha hoy) {
+        AmpliacionReserva.validarEstado(exigirReserva(numero), hoy);
+    }
+
+    public void agregarPasajeros(int numero, java.util.List<Pasajero> nuevos, Fecha hoy, String temporada)
+            throws RequisitoPasajeroException {
+        Reserva reserva = exigirReserva(numero);
+        CondicionesReserva precio = condiciones.buscar(numero);
+        double tarifa = precio == null ? reserva.getSalida().getTour().getTarifaVigente(reserva.getSalida().getFechaInicio(), temporada).getPrecioBase() : precio.getTarifa();
+        AmpliacionReserva.agregar(reserva, nuevos, hoy, tarifa);
+        reservaRepo.actualizar(reserva);
+        if (precio == null) condiciones.guardar(new CondicionesReserva(numero, temporada, tarifa));
+    }
+
+    public String obtenerTemporada(int numero) {
+        CondicionesReserva precio = condiciones.buscar(numero);
+        return precio == null ? "" : precio.getTemporada();
     }
 
     public Cliente buscarCliente(String documento) {
@@ -51,6 +75,8 @@ public class ControladorVentas {
         for (Pasajero p : reserva.getPasajeros()) reserva.validarPasajero(p);
         calculadoraPrecio.calcularTotalReserva(reserva, temporada);
         reservaRepo.guardar(reserva);
+        condiciones.guardar(new CondicionesReserva(reserva.getNumero(), temporada,
+                salida.getTour().getTarifaVigente(salida.getFechaInicio(), temporada).getPrecioBase()));
     }
 
     public Pago cobrar(int numero, Fecha fecha, double importe, MedioPago medio, int cuotas) {

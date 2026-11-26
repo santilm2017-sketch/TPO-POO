@@ -66,10 +66,13 @@ public class ControladorAdministrativo {
         return t;
     }
 
-    public void emitirReportesEconomicos() {
+    public void emitirReportesEconomicos() { System.out.print(obtenerReportesEconomicos()); }
+
+    public String obtenerReportesEconomicos() {
+        String texto = "";
         Map<String, Double> ventas = new HashMap<>();
         Map<String, Double> ingresos = new HashMap<>();
-        System.out.println("Cancelaciones (reserva, fecha, motivo, devoluciones)");
+        texto += "Cancelaciones (reserva, fecha, motivo, devoluciones)" + "\n";
         for (Salida s : salidaRepo.obtenerTodos()) {
             double ingreso = 0;
             for (Reserva r : s.getReservas()) {
@@ -82,33 +85,38 @@ public class ControladorAdministrativo {
                 CancelacionReserva c = r.getCancelacion();
                 if (c != null) {
                     ingreso -= c.getImporteDevuelto();
-                    System.out.println(r.getNumero() + " " + Fecha.mostrar(c.getFecha()) + " " + c.getMotivo() + " " + c.getDevoluciones());
+                    texto += r.getNumero() + " " + Fecha.mostrar(c.getFecha()) + " " + c.getMotivo() + " " + c.getDevoluciones() + "\n";
                 }
             }
             String codigo = s.getTour().getCodigo();
             if (!ingresos.containsKey(codigo)) ingresos.put(codigo, 0.0);
             ingresos.put(codigo, Importes.redondear(ingresos.get(codigo) + ingreso));
         }
-        System.out.println("Ventas por vendedor");
-        for (String legajo : ventas.keySet()) System.out.println(legajo + " | $ " + Importes.mostrar(ventas.get(legajo)));
-        System.out.println("Ingresos netos por tour");
-        for (String codigo : ingresos.keySet()) System.out.println(codigo + " | $ " + Importes.mostrar(ingresos.get(codigo)));
+        texto += "Ventas por vendedor" + "\n";
+        for (String legajo : ventas.keySet()) texto += legajo + " | $ " + Importes.mostrar(ventas.get(legajo)) + "\n";
+        texto += "Ingresos netos por tour" + "\n";
+        for (String codigo : ingresos.keySet()) texto += codigo + " | $ " + Importes.mostrar(ingresos.get(codigo)) + "\n";
+        return texto;
     }
 
-    public void emitirReporteOcupacion() {
+    public void emitirReporteOcupacion() { System.out.print(obtenerReporteOcupacion()); }
+
+    public String obtenerReporteOcupacion() {
+        String texto = "";
         List<Salida> salidas = salidaRepo.obtenerTodos();
-        System.out.println("=== REPORTE DE OCUPACIÓN DE SALIDAS ===");
+        texto += "=== REPORTE DE OCUPACIÓN DE SALIDAS ===" + "\n";
         if (salidas.isEmpty()) {
-            System.out.println("No hay salidas registradas en el sistema.");
-            return;
+            texto += "No hay salidas registradas en el sistema." + "\n";
+            return texto;
         }
 
         for (Salida s : salidas) {
-            System.out.println("Tour: " + s.getTour().getNombre() + " | Fecha Inicio: " + Fecha.mostrar(s.getFechaInicio()));
-            System.out.println("Cupo Maximo: " + s.getCupoMaximo() + " | Pasajeros Reservados: " + s.getCuposReservados());
+            texto += "Tour: " + s.getTour().getNombre() + " | Fecha Inicio: " + Fecha.mostrar(s.getFechaInicio()) + "\n";
+            texto += "Cupo Maximo: " + s.getCupoMaximo() + " | Pasajeros Reservados: " + s.getCuposReservados() + "\n";
             double ocupacion = ((double) s.getCuposReservados() / s.getCupoMaximo()) * 100;
-            System.out.println("Porcentaje de ocupación: " + Importes.mostrar(ocupacion) + "%");
-            System.out.println("----------------------------------------");
+            texto += "Porcentaje de ocupación: " + Importes.mostrar(ocupacion) + "%" + "\n";
+            texto += "----------------------------------------" + "\n";
         }
+        return texto;
     }
 }

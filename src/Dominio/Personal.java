@@ -9,17 +9,10 @@ public abstract class Personal implements Serializable {
     protected String telefono;
 
     public Personal(String documento, String nombre, String email, String telefono) {
-        this.documento = obligatorio(documento, "Documento");
-        this.nombre = obligatorio(nombre, "Nombre");
+        this.documento = Validaciones.identificadorPersonal(documento);
+        this.nombre = Validaciones.nombrePersona(nombre);
         this.email = email;
-        this.telefono = obligatorio(telefono, "Teléfono");
-    }
-
-    private static String obligatorio(String valor, String dato) {
-        if (valor == null || valor.isBlank()) {
-            throw new IllegalArgumentException(dato + " obligatorio.");
-        }
-        return valor.trim();
+        this.telefono = Validaciones.telefono(telefono);
     }
 
     public String getDocumento() {

@@ -10,10 +10,10 @@ public class Cliente implements Serializable {
     private String telefono;
 
     public Cliente(String documento, String nombre, String email, String telefono) {
-        this.documento = obligatorio(documento, "Documento");
-        this.nombre = obligatorio(nombre, "Nombre");
-        this.email = obligatorio(email, "Email");
-        this.telefono = obligatorio(telefono, "Teléfono");
+        this.documento = Validaciones.documento(documento);
+        this.nombre = Validaciones.nombrePersona(nombre);
+        this.email = Validaciones.email(email);
+        this.telefono = Validaciones.telefono(telefono);
     }
 
     public Cliente(String documento, String nombre, String email, String telefono, String paisResidencia) {
@@ -47,18 +47,18 @@ public class Cliente implements Serializable {
     }
 
     public void setDocumento(String documento) {
-        this.documento = obligatorio(documento, "Documento");
+        this.documento = Validaciones.documento(documento);
     }
 
     public void setNombre(String nombre) {
-        this.nombre = obligatorio(nombre, "Nombre");
+        this.nombre = Validaciones.nombrePersona(nombre);
     }
 
     public void setEmail(String email) {
-        this.email = obligatorio(email, "Email");
+        this.email = Validaciones.email(email);
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = obligatorio(telefono, "Teléfono");
+        this.telefono = Validaciones.telefono(telefono);
     }
 }

@@ -21,4 +21,7 @@ public class PromocionAnticipada implements EstrategiaPromocion {
         }
         return subtotalPasajes * PORCENTAJE_DESCUENTO;
     }
+    public double calcularDescuento(Reserva reserva, double subtotalPasajes, int cantidadPasajeros) {
+        return calcularDescuento(reserva, subtotalPasajes);
+    }
 }

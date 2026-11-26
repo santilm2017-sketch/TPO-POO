@@ -16,6 +16,8 @@ La propuesta elegida es:
 
 **Propuesta B: Agencia de Turismo Rumbo Sur.**
 
+La versión para la defensa incluye una interfaz gráfica Swing. Se mantienen los controladores, el dominio, la persistencia y el menú de consola como alternativa.
+
 El sistema permite organizar tours culturales, de naturaleza y de aventura. Se pueden registrar clientes, programar salidas, realizar reservas con uno o más pasajeros, contratar servicios adicionales y registrar pagos.
 
 También permite asignar guías y vehículos, emitir listas de pasajeros, cancelar o modificar reservas y consultar reportes de la agencia.
@@ -34,6 +36,8 @@ El código está separado en paquetes para que cada parte tenga una responsabili
 src/
  ├── Presentacion/
  │    ├── MenuPrincipal.java
+ │    ├── VentanaPrincipal.java
+ │    ├── DialogoDatos.java
  │    └── DatosIniciales.java
  │
  ├── Dominio/
@@ -57,6 +61,9 @@ src/
  │    ├── ServicioAdicional.java
  │    ├── ContratacionServicio.java
  │    ├── CalculadoraPrecioReserva.java
+ │    ├── AmpliacionReserva.java
+ │    ├── CondicionesReserva.java
+ │    ├── Validaciones.java
  │    └── Excepciones/
  │
  ├── Controladores/
@@ -71,6 +78,7 @@ src/
  │    ├── RepositorioSalidas.java
  │    ├── RepositorioReservas.java
  │    ├── RepositorioPersonal.java
+ │    ├── RepositorioCondiciones.java
  │    ├── ArchivoLista.java
  │    └── ErrorArchivo.java
  │
@@ -78,7 +86,8 @@ src/
       ├── CalculadoraPrecioReservaTest.java
       ├── ReservaSalidaTest.java
       ├── PersonalAdministrativoTest.java
-      └── RepositorioPersonalTest.java
+      ├── RepositorioPersonalTest.java
+      └── MejorasFinalTest.java
 ```
 
 La carpeta `docs` contiene la Entrega 1, los documentos de revisión, el plan de pruebas, una demostración por consola y las secuencias actualizadas.
@@ -94,7 +103,7 @@ El sistema permite:
 - Contratar adicionales por pasajero, incluido el seguro obligatorio de aventura.
 - Registrar señas y pagos con efectivo, transferencia o tarjeta.
 - Listar todas las reservas con su estado, total, saldo y notas de ajuste.
-- Reemplazar pasajeros, cancelar reservas y registrar notas de ajuste.
+- Agregar pasajeros a reservas existentes, reemplazarlos, cancelar reservas y registrar notas de ajuste.
 - Asignar guía y transporte, emitir la lista de pasajeros e iniciar y cerrar salidas.
 - Calcular honorarios de guías y consultar reportes.
 - Registrar y consultar coordinadores y administradores.
@@ -137,13 +146,14 @@ Esta organización permite ubicar cada operación sin concentrar todo el program
 
 Las reservas se guardan junto con sus salidas para conservar relacionados los pasajeros, pagos y cupos. Los coordinadores y administradores se guardan en un archivo separado.
 
-La carpeta `datos` se genera durante la ejecución. Para recuperar lo guardado, se debe volver a ejecutar desde el mismo directorio de trabajo. Sus archivos son locales y están excluidos del repositorio mediante `.gitignore`.
+La carpeta `datos` se genera durante la ejecución. Incluye ahora las condiciones de precio de las reservas nuevas, guardadas aparte para conservar el formato de los archivos anteriores. Para recuperar lo guardado, se debe volver a ejecutar desde el mismo directorio de trabajo. Sus archivos son locales y están excluidos del repositorio mediante `.gitignore`.
 
 ## Clases principales
 
 | Clase | Responsabilidad |
 |---|---|
-| MenuPrincipal.java | Muestra el menú, recibe datos y presenta los resultados. |
+| VentanaPrincipal.java y DialogoDatos.java | Presentan las operaciones mediante ventanas, formularios y selección de registros existentes. |
+| MenuPrincipal.java | Conserva el acceso por consola. |
 | DatosIniciales.java | Carga los ejemplos iniciales cuando corresponde. |
 | Tour.java y sus subclases | Representan los tours y sus requisitos. |
 | Actividad.java y Tarifa.java | Representan el itinerario y los precios por temporada y vigencia. |
@@ -151,6 +161,9 @@ La carpeta `datos` se genera durante la ejecución. Para recuperar lo guardado, 
 | Reserva.java | Reúne titular, vendedor, pasajeros, pagos, modificaciones y cancelación. |
 | Cliente.java y Pasajero.java | Representan al titular y a quienes participan del viaje. |
 | CalculadoraPrecioReserva.java | Calcula pasajes, adicionales y promociones. |
+| AmpliacionReserva.java | Valida el lote completo y calcula la diferencia de precio antes de incorporar pasajeros. |
+| CondicionesReserva.java y RepositorioCondiciones.java | Conservan la temporada y tarifa inicial de las reservas nuevas. |
+| Validaciones.java | Reúne las comprobaciones comunes de documentos, teléfonos y otros campos obligatorios. |
 | Pago.java | Conserva el capital abonado, la fecha, las cuotas y el medio de pago. |
 | Guia.java y Vendedor.java | Representan al personal de operación y venta. |
 | PersonalAdministrativo.java | Registra los datos del coordinador y administrador, incluido su legajo. |
@@ -170,7 +183,7 @@ Se necesita **JDK 17 o superior**. El proyecto fue compilado con Temurin 24 util
 1. Abrir la carpeta del proyecto.
 2. Seleccionar el JDK instalado en **File → Project Structure → Project**.
 3. Verificar que `src` esté marcada como **Sources Root**.
-4. Abrir `src/Presentacion/MenuPrincipal.java` y ejecutar su método `main`.
+4. Abrir `src/Presentacion/VentanaPrincipal.java` y ejecutar su método `main` para iniciar Swing sin ingresar datos por consola.
 5. Usar la carpeta del proyecto como **Working directory** para conservar los datos entre ejecuciones.
 
 ### Desde consola
@@ -180,18 +193,22 @@ Abrir PowerShell en la raíz del proyecto, con `java` y `javac` disponibles en e
 ```powershell
 New-Item -ItemType Directory -Force out | Out-Null
 javac --release 17 -encoding UTF-8 -d out (Get-ChildItem -Recurse src -Filter *.java).FullName
-java -cp out Presentacion.MenuPrincipal
+java -cp out Presentacion.VentanaPrincipal
 ```
+
+Para usar la consola original: `java -cp out Presentacion.MenuPrincipal`.
 
 ## Cómo probar el sistema
 
-Durante una carga, **0 cancela y vuelve al menú principal**. En el menú principal, 0 sale del programa. Para ingresar un importe cero, escribir **0,00**; los ajustes negativos siguen permitidos.
+En Swing, las secciones se eligen por pestañas y los registros existentes por listas desplegables. Los formularios tienen botones Aceptar y Cancelar; el listado y los reportes tienen paginación. **Reservas → Agregar pasajeros** permite ampliar una reserva. Se selecciona la reserva, la cantidad y los datos de los pasajeros nuevos; en aventura se pide el seguro.
+
+Durante una carga de consola, **0 cancela y vuelve al menú principal**. En el menú principal, 0 sale del programa. Para ingresar un importe cero, escribir **0,00**; los ajustes negativos siguen permitidos.
 
 Si una fecha, número u opción de texto es inválida, se vuelve a pedir ese campo. Un error que depende de varios datos permite elegir **1 para repetir la misma operación** o **0 para cancelarla**. Al repetir una operación se vuelven a ingresar sus datos. Los errores de archivos interrumpen la sesión para evitar continuar después de un fallo de guardado. No se impone un máximo arbitrario de días: una duración positiva admitida por el dominio sigue siendo válida.
 
 ### 1. Datos iniciales
 
-Al ejecutar MenuPrincipal, se ingresa la fecha de trabajo en formato **DD/MM/AAAA**, por ejemplo `05/11/2026`. Los importes se ingresan sin separador de miles y con coma decimal, por ejemplo `15900,00`.
+Al iniciar la ventana o MenuPrincipal, se ingresa la fecha de trabajo en formato **DD/MM/AAAA**, por ejemplo `05/11/2026`. Los importes se ingresan sin separador de miles y con coma decimal, por ejemplo `15900,00`.
 
 En una primera ejecución con fecha de trabajo del año 2026, se cargan cinco clientes y cinco tours con salidas en enero de 2027:
 
@@ -215,7 +232,7 @@ El año de las salidas se determina en la primera carga. Cada tour tiene una act
 
 La precarga incluye una reserva para Salta con Ana y Leo, traslado al hotel para Ana, guía y vehículo. Con fecha de trabajo 03/11/2026, su total es $36.000, la seña $10.800 y el saldo $25.200.
 
-En los datos locales de la demostración se agregaron además estas dos reservas desde el menú:
+En una demostración anterior se agregaron además estas dos reservas desde el menú. La tabla conserva los resultados de esa carga, no el estado actual de los archivos locales:
 
 | Reserva | Titular | Tour | Estado | Total | Saldo |
 |---|---|---|---|---|---|
@@ -245,7 +262,7 @@ Después de cargar o recuperar los datos, se muestra el menú:
 
 La opción 1 muestra el catálogo automáticamente y permite registrar tours, tarifas y actividades. Desde **1 → 4** se muestran los coordinadores y administradores guardados. Allí se puede elegir **1** para registrar otro o **0** para volver.
 
-El menú tiene nueve opciones principales y 0 para salir. La opción 7 reúne adicionales, reemplazos, cancelaciones y ajustes. La opción 8 tiene tres recorridos: **1. Asignar guía y vehículo**, **2. Emitir lista e iniciar salida** y **3. Cerrar salida y consultar honorarios**. En el segundo, responder **n** permite ver la lista sin iniciar. El tercero muestra los honorarios al cerrar y permite volver a consultarlos para una salida ya finalizada.
+El menú tiene nueve opciones principales y 0 para salir. La opción 7 reúne adicionales, reemplazos, cancelaciones, ajustes y agregado de pasajeros. La opción 8 tiene tres recorridos: **1. Asignar guía y vehículo**, **2. Emitir lista e iniciar salida** y **3. Cerrar salida y consultar honorarios**. En el segundo, responder **n** permite ver la lista sin iniciar. El tercero muestra los honorarios al cerrar y permite volver a consultarlos para una salida ya finalizada.
 
 Ejemplo de prueba manual para consultar las reservas:
 
@@ -254,7 +271,7 @@ Ejemplo de prueba manual para consultar las reservas:
 3. Revisar el estado, saldo y las notas de ajuste en ese mismo listado.
 4. Salir con **0** y volver a abrir desde el mismo directorio para comprobar que los datos se recuperan.
 
-El menú no ejecuta las pruebas unitarias automáticamente. Se realizan por separado, como se indica a continuación.
+Ni la ventana ni el menú ejecutan las pruebas unitarias automáticamente. Se realizan por separado, como se indica a continuación.
 
 ### 3. Pruebas automatizadas
 
@@ -266,7 +283,7 @@ java -cp out Test.ReservaSalidaTest
 java -cp out Test.PersonalAdministrativoTest
 ```
 
-Estas clases completaron **65 comprobaciones aprobadas y 0 fallidas**: 33 de precios y reglas, 22 de reservas y salidas y 10 de personal. Cada comprobación correcta muestra `[OK]`; una diferencia provoca una excepción.
+Estas clases completaron **112 comprobaciones aprobadas y 0 fallidas**: 33 de precios y reglas, 22 de reservas y salidas y 57 de personal, incluyendo las validaciones que ya existían en la carpeta actual. Cada comprobación correcta muestra `[OK]`; una diferencia provoca una excepción.
 
 La prueba de archivos de personal debe ejecutarse en una carpeta nueva para no usar los datos de trabajo. Desde la raíz del proyecto, después de compilar:
 
@@ -299,7 +316,23 @@ Los siguientes resultados fueron verificados. Se resumen algunos casos; el detal
 | Listar reservas | Opción 6 con reservas guardadas | Mostrar titular, viaje, estado, total y saldo | Se mostraron los datos y las reservas canceladas | Los archivos no cambiaron al repetir la consulta |
 | Listado vacío | Repositorio sin reservas | Informar que no hay reservas | Se mostró el mensaje correspondiente | Verificación aislada de la precarga |
 
-La última ejecución sobre el menú simplificado completó **47 casos funcionales aprobados, 0 fallidos y F25 pendiente**: 24 recorridos principales, tres de personal, uno de compatibilidad, 13 de validación de entradas y seis de operaciones agrupadas. La revisión posterior del listado agregó cuatro verificaciones específicas aprobadas: datos visibles, acceso al personal reorganizado, conservación de archivos y casos de reservas canceladas y listado vacío, agrupados en cuatro comprobaciones.
+La verificación de la nueva versión completó **156 comprobaciones Java**: las 112 anteriores, 6 de archivos y 38 nuevas de validación, ampliación y recuperación. También se ejecutaron **22 verificaciones gráficas automatizadas** sobre los componentes Swing, en carpetas temporales, y cinco comprobaciones de compatibilidad de archivos. No hubo fallas en esas ejecuciones. Los recorridos anteriores del plan se conservan como antecedentes; no se presentan como una nueva ejecución completa de la consola.
+
+`Test.MejorasFinalTest` escribe archivos y debe ejecutarse en una carpeta nueva, igual que la prueba de repositorio. Después de compilar, desde la raíz:
+
+```powershell
+$clasesRumbo = Join-Path (Get-Location).Path 'out'
+$pruebaRumbo = Join-Path $env:TEMP 'rumbo-mejoras-prueba-01'
+New-Item -ItemType Directory -Path $pruebaRumbo -ErrorAction Stop | Out-Null
+Push-Location $pruebaRumbo
+try { java -cp $clasesRumbo Test.MejorasFinalTest } finally { Pop-Location }
+```
+
+Si la carpeta existe, elegir otro nombre. La ejecución manual desde IntelliJ sigue pendiente de realizar por el grupo.
+
+Las condiciones de precio de las ventas nuevas se guardan en `datos/condiciones-reservas.dat`. Se conserva la tarifa inicial y la fecha de la reserva para comparar el precio antes y después de agregar pasajeros; la diferencia se suma al total existente, conservando pagos, servicios y ajustes. En reservas de la versión anterior sin ese registro, se pide la temporada y se informa que la diferencia se calcula con la tarifa vigente disponible; el importe anterior no se reemplaza.
+
+El detalle de las cuatro mejoras, las clases modificadas, su relación con los PDFs y la demostración está en [Mejoras para la defensa](docs/Mejoras_Defensa.md).
 
 ## Estado de la entrega
 
@@ -314,7 +347,7 @@ El proyecto incluye:
 - Documentación de diseño y correspondencia con la implementación.
 - Enlace al repositorio de GitHub.
 
-La compilación y las pruebas se verificaron por consola. Queda completar **F25 desde IntelliJ**, validar con un parser y renderizar las secuencias Mermaid y aclarar con la cátedra el alcance de las liquidaciones a proveedores. El programa registra proveedores asociados a actividades y calcula honorarios de guías; no liquida pagos a proveedores.
+La compilación y las pruebas de negocio se verificaron con Java; la interfaz se probó automáticamente con sus formularios reales, no mediante una ejecución manual desde IntelliJ. Queda completar **F25 desde IntelliJ**, validar con un parser y renderizar las secuencias Mermaid y aclarar con la cátedra el alcance de las liquidaciones a proveedores. El programa registra proveedores asociados a actividades y calcula honorarios de guías; no liquida pagos a proveedores.
 
 El diseño original está en la [Entrega 1](docs/TPO%20POO%20(1).pdf). Las diferencias y aclaraciones se encuentran en [Correspondencia técnica](docs/Correspondencia_Tecnica.md) y las versiones editables de las secuencias en [docs/uml](docs/uml/README.md). El informe final del TPO será redactado por el grupo por separado.
 
@@ -324,4 +357,4 @@ El trabajo permite aplicar los conceptos de Programación Orientada a Objetos de
 
 Rumbo Sur relaciona tours, salidas, clientes, pasajeros y pagos, separando las operaciones del menú, las reglas de negocio y el guardado de datos.
 
-El sistema se ejecuta desde MenuPrincipal.java, donde se cargan o recuperan los datos y se accede a las funcionalidades por consola. Las pruebas permiten comprobar los cálculos y las operaciones principales de la agencia.
+El sistema se ejecuta gráficamente desde VentanaPrincipal.java y conserva MenuPrincipal.java como alternativa de consola. Las pruebas permiten comprobar los cálculos y las operaciones principales de la agencia.

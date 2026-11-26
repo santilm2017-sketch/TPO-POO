@@ -7,7 +7,7 @@ public class PersonalAdministrativo extends Personal {
 
     public PersonalAdministrativo(String documento, String nombre, String email,
                                  String telefono, String legajo, String rol) {
-        super(obligatorio(documento, "Documento"), obligatorio(nombre, "Nombre"),
+        super(Validaciones.documento(documento), obligatorio(nombre, "Nombre"),
                 email, obligatorio(telefono, "Teléfono"));
         this.legajo = obligatorio(legajo, "Legajo");
         String valor = obligatorio(rol, "Rol").toLowerCase();

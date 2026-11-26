@@ -143,6 +143,7 @@ public class MenuPrincipal {
                 else if (operacion == 72) reemplazar();
                 else if (operacion == 73) cancelar();
                 else if (operacion == 74) registrarAjuste();
+                else if (operacion == 75) agregarPasajeros();
                 else if (operacion >= 81 && operacion <= 83) operarSalida(operacion - 80);
                 return;
             } catch (CargaCancelada e) {
@@ -198,8 +199,9 @@ public class MenuPrincipal {
         System.out.println("2. Reemplazar pasajero");
         System.out.println("3. Cancelar");
         System.out.println("4. Registrar ajuste de precio");
+        System.out.println("5. Agregar pasajeros");
         System.out.println("0. Volver");
-        int opcion = opcion("Opción", 4);
+        int opcion = opcion("Opción", 5);
         if (opcion != 0) ejecutarOperacion(70 + opcion);
     }
 
@@ -213,7 +215,13 @@ public class MenuPrincipal {
     }
 
     private static void registrarCliente() {
-        String doc = leer("Documento");
+        String doc = Validaciones.documento(leer("Documento"));
+        Cliente existente = controladorVentas.buscarCliente(doc);
+        if (existente != null) {
+            System.out.println("Cliente ya registrado: " + existente.getNombre() + " | " + existente.getEmail()
+                    + " | " + existente.getTelefono());
+            return;
+        }
         String nom = leer("Nombre completo");
         String email = leer("Email");
         String tel = leer("Teléfono");
@@ -350,7 +358,7 @@ public class MenuPrincipal {
         String codigo = leer("Código tour");
         int dia = entero("Día");
         int orden = entero("Orden");
-        String horario = leer("Horario");
+        String horario = leer("Horario HH:MM");
         String descripcion = leer("Descripción");
         String lugar = leer("Lugar");
 
@@ -371,6 +379,27 @@ public class MenuPrincipal {
         String documento = leer("Documento del pasajero");
         ServicioAdicional servicio = new ServicioAdicional(leer("Servicio"), importe("Precio del servicio"), false);
         controladorVentas.contratar(numero, documento, servicio, hoy);
+    }
+
+    private static void agregarPasajeros() throws RequisitoPasajeroException {
+        int numero = entero("Reserva");
+        Reserva reserva = controladorVentas.exigirReserva(numero);
+        controladorVentas.comprobarAmpliacion(numero, hoy);
+        String temporada = controladorVentas.obtenerTemporada(reserva.getNumero());
+        if (temporada.isEmpty()) {
+            System.out.println("Reserva anterior: seleccione la temporada para calcular la diferencia con la tarifa vigente.");
+            temporada = elegir("Temporada", new String[]{"baja", "media", "alta"});
+        }
+        int cantidad = entero("Cantidad de pasajeros nuevos");
+        java.util.List<Pasajero> nuevos = new java.util.ArrayList<>();
+        for (int i = 0; i < cantidad; i++) {
+            Pasajero p = leerPasajero();
+            if (reserva.getSalida().getTour().getCategoria().equals("aventura"))
+                p.contratarServicio(new ServicioAdicional("Seguro de viaje", importe("Seguro obligatorio"), true), hoy.toString());
+            nuevos.add(p);
+        }
+        controladorVentas.agregarPasajeros(numero, nuevos, hoy, temporada);
+        System.out.println("Pasajeros agregados. Total $ " + Importes.mostrar(reserva.getTotal()));
     }
 
     private static void registrarAjuste() {

@@ -18,9 +18,9 @@ public class Actividad implements Comparable<Actividad>, java.io.Serializable {
 
         this.dia = dia;
         this.orden = orden;
-        this.horario = horario;
-        this.descripcion = descripcion;
-        this.lugar = lugar;
+        this.horario = Validaciones.horario(horario);
+        this.descripcion = Validaciones.obligatorio(descripcion, "descripcion");
+        this.lugar = Validaciones.obligatorio(lugar, "lugar");
         this.proveedor = proveedor;
     }
 

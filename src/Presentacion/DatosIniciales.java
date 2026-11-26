@@ -58,6 +58,9 @@ class DatosIniciales {
                     && hoy.diasHasta(new Fecha(fecha)) >= 10 && fecha.compareTo("2010-01-01") >= 0) {
                 prepararSalidaSalta(salida, clientes.buscarPorId("30000001"), hoy);
                 salidas.actualizar(salida);
+                Reserva reserva = salida.getReservas().get(0);
+                new Persistencia.RepositorioCondiciones().guardar(new CondicionesReserva(reserva.getNumero(), "baja",
+                        salida.getTour().getTarifaVigente(salida.getFechaInicio(), "baja").getPrecioBase()));
             }
         }
     }

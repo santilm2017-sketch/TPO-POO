@@ -34,10 +34,10 @@ public class CalculadoraPrecioReservaTest {
         CalculadoraPrecioReserva calc = new CalculadoraPrecioReserva();
         double tarifaBase = 1000.0;
 
-        Pasajero adulto = new Pasajero("1", "Adulto", "1990-01-01", "adulto", "Contacto", "Ninguna");
-        Pasajero menor = new Pasajero("2", "Menor", "2018-01-01", "menor_12", "Contacto", "Ninguna");
-        Pasajero bebe = new Pasajero("3", "Bebe", "2024-01-01", "menor_3", "Contacto", "Ninguna");
-        Pasajero jubilado = new Pasajero("4", "Jubilado", "1950-01-01", "jubilado", "Contacto", "Ninguna");
+        Pasajero adulto = new Pasajero("1", "Adulto", "1990-01-01", "adulto", "111", "Ninguna");
+        Pasajero menor = new Pasajero("2", "Menor", "2018-01-01", "menor_12", "111", "Ninguna");
+        Pasajero bebe = new Pasajero("3", "Bebe", "2024-01-01", "menor_3", "111", "Ninguna");
+        Pasajero jubilado = new Pasajero("4", "Jubilado", "1950-01-01", "jubilado", "111", "Ninguna");
 
         verificar(calc.calcularPrecioPasajero(adulto, tarifaBase) == 1000.0, "Precio adulto");
         verificar(calc.calcularPrecioPasajero(menor, tarifaBase) == 600.0, "Precio menor");
@@ -54,8 +54,8 @@ public class CalculadoraPrecioReservaTest {
         Reserva anticipada = reserva(salida, "2027-12-31"); // 61 días, febrero bisiesto
         Reserva comun = reserva(salida, "2028-01-01");      // 60 días
         for (int i = 1; i <= 6; i++) {
-            anticipada.agregarPasajero(adulto("A" + i));
-            comun.agregarPasajero(adulto("B" + i));
+            anticipada.agregarPasajero(adulto("10" + i));
+            comun.agregarPasajero(adulto("20" + i));
         }
         verificar(calc.obtenerMejorDescuento(anticipada, 6000) == 900, "Promociones simultáneas");
         verificar(calc.obtenerMejorDescuento(comun, 6000) == 600, "Solo grupo a los 60 días");
@@ -110,7 +110,7 @@ public class CalculadoraPrecioReservaTest {
         Reserva parcial = reserva(s, "2028-02-01");
         CalculadoraPrecioReserva calc = new CalculadoraPrecioReserva();
         for (Reserva r : new Reserva[]{paga, parcial}) {
-            r.agregarPasajero(adulto("Doc" + r.getNumero()));
+            r.agregarPasajero(adulto("30" + r.getNumero()));
             calc.calcularTotalReserva(r, "baja");
             r.confirmarAlta();
         }

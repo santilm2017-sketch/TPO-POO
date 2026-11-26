@@ -4,6 +4,8 @@ import Dominio.PersonalAdministrativo;
 import Dominio.Cliente;
 import Dominio.Guia;
 import Dominio.Vendedor;
+import Dominio.Pasajero;
+import Dominio.Validaciones;
 
 public class PersonalAdministrativoTest {
     public static void main(String[] args) {
@@ -40,6 +42,7 @@ public class PersonalAdministrativoTest {
         }
 
         probarDatosObligatorios();
+        probarNombres();
         System.out.println("=== PRUEBAS DE PERSONAL COMPLETADAS ===");
     }
 
@@ -76,6 +79,46 @@ public class PersonalAdministrativoTest {
                 && vendedor.getLegajo().equals("V1"), "Cambios inválidos conservan los datos anteriores");
         verificar(new Guia("G1", "Julia", "", "111", "M1", 500).getEmail().equals("")
                 && vendedor.getEmail().equals(""), "Email del personal sigue siendo opcional");
+    }
+
+    private static void probarNombres() {
+        Cliente cliente = new Cliente("123", "Ana", "ana@example.com", "111");
+        for (String nombre : new String[]{"María José", "Juan Pérez", "Ana-María", "Iñaki Muñoz", "  José Núñez  "}) {
+            String esperado = nombre.trim();
+            verificar(Validaciones.nombrePersona(nombre).equals(esperado), "Nombre válido: " + nombre);
+            verificar(new Cliente("123", nombre, "ana@example.com", "111").getNombre().equals(esperado), "Nombre del cliente");
+            verificar(new Pasajero("123", nombre, "1990-01-01", "adulto", "111", "").getNombre().equals(esperado), "Nombre del pasajero");
+            verificar(new Guia("G1", nombre, "", "111", "M1", 500).getNombre().equals(esperado), "Nombre del guía por herencia");
+            verificar(new Vendedor("V1", nombre, "", "111", "V1").getNombre().equals(esperado), "Nombre del vendedor por herencia");
+            verificar(new PersonalAdministrativo("123", nombre, "", "111", "C1", "coordinador").getNombre().equals(esperado), "Nombre del coordinador por herencia");
+            verificar(new PersonalAdministrativo("123", nombre, "", "111", "A1", "administrador").getNombre().equals(esperado), "Nombre del administrador por herencia");
+            cliente.setNombre(nombre);
+            verificar(cliente.getNombre().equals(esperado), "Setter acepta nombre válido");
+        }
+        String nombreAnterior = cliente.getNombre();
+        for (String nombre : new String[]{null, "", "   ", "Thomas123", "12345", "Ana1 María", "Juan-2", "3Ana"}) {
+            Runnable[] operaciones = {
+                    () -> Validaciones.nombrePersona(nombre),
+                    () -> new Cliente("123", nombre, "ana@example.com", "111"),
+                    () -> new Cliente("123", nombre, "ana@example.com", "111", "Argentina"),
+                    () -> new Pasajero("123", nombre, "1990-01-01", "adulto", "111", ""),
+                    () -> new Guia("G1", nombre, "", "111", "M1", 500),
+                    () -> new Vendedor("V1", nombre, "", "111", "V1"),
+                    () -> new Vendedor("V1", nombre, "", "111", "V1", 5),
+                    () -> new PersonalAdministrativo("123", nombre, "", "111", "C1", "coordinador"),
+                    () -> new PersonalAdministrativo("123", nombre, "", "111", "A1", "administrador"),
+                    () -> cliente.setNombre(nombre)
+            };
+            for (int i = 0; i < operaciones.length; i++) {
+                boolean rechazado = false;
+                try { operaciones[i].run(); }
+                catch (IllegalArgumentException e) {
+                    rechazado = e.getMessage() != null && !e.getMessage().isEmpty();
+                }
+                verificar(rechazado, "Nombre inválido rechazado en operación " + i + ": " + nombre);
+            }
+            verificar(cliente.getNombre().equals(nombreAnterior), "Setter inválido conserva el nombre anterior");
+        }
     }
 
     private static void verificar(boolean correcto, String caso) {

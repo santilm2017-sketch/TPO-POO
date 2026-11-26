@@ -20,11 +20,14 @@ public class Importes {
             if (caracter == ',') numero += ".";
             else numero += caracter;
         }
-        return Double.parseDouble(numero);
+        double valor = Double.parseDouble(numero);
+        if (!(valor >= -Long.MAX_VALUE / 100.0 && valor <= Long.MAX_VALUE / 100.0))
+            throw new IllegalArgumentException("Importe inválido o demasiado grande para expresarlo en centavos.");
+        return valor;
     }
 
     public static boolean esValido(double monto) {
-        return monto >= 0 && monto <= Double.MAX_VALUE;
+        return monto >= 0 && monto <= Long.MAX_VALUE / 100.0;
     }
 
     // Se convierte a centavos enteros. Sumar medio centavo antes de truncar

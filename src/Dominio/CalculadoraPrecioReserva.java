@@ -78,20 +78,28 @@ public class CalculadoraPrecioReserva {
         Tarifa tarifaVigente = salida.getTour().getTarifaVigente(salida.getFechaInicio(), temporada);
         double precioBase = tarifaVigente.getPrecioBase();
 
-        // 2. Calcular subtotal de pasajes según categorías de pasajeros
-        double subtotalPasajes = calcularSubtotalPasajes(reserva, precioBase);
+        double total = calcularConTarifa(reserva, precioBase);
+        reserva.setTotal(total);
+        return total;
+    }
 
-        // 3. Obtener el mejor descuento promocional (regla de no acumulación RN12)
-        double descuentoPromocion = obtenerMejorDescuento(reserva, subtotalPasajes);
+    public double calcularConTarifa(Reserva reserva, double precioBase) {
+        return calcularConPasajeros(reserva, reserva.getPasajeros(), precioBase);
+    }
 
-        // 4. Sumar los servicios adicionales contratados (RN13)
-        double totalAdicionales = calcularTotalServiciosAdicionales(reserva);
-
-        // 5. Total final = (Subtotal Pasajes - Descuento Promo) + Adicionales
-        double totalFinal = Importes.redondear(subtotalPasajes - descuentoPromocion + totalAdicionales);
-        reserva.setTotal(totalFinal);
-
-        return totalFinal;
+    public double calcularConPasajeros(Reserva reserva, List<Pasajero> pasajeros, double precioBase) {
+        double subtotal = 0, servicios = 0, descuento = 0;
+        for (Pasajero p : pasajeros) {
+            subtotal += calcularPrecioPasajero(p, precioBase);
+            for (ContratacionServicio c : p.getContrataciones()) servicios += c.calcularImporte();
+        }
+        for (EstrategiaPromocion promocion : promocionesDisponibles) {
+            double actual = promocion.calcularDescuento(reserva, subtotal, pasajeros.size());
+            if (actual > descuento) descuento = actual;
+        }
+        double total = subtotal - descuento + servicios;
+        if (!Importes.esValido(total)) throw new IllegalArgumentException("El precio calculado no es válido.");
+        return Importes.redondear(total);
     }
 
     public void agregarPromocion(EstrategiaPromocion promocion) {
